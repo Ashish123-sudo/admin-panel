@@ -1,0 +1,290 @@
+// ================= PAGE LAYOUT =================
+.page-header {
+  background: #ffffff;
+  padding: 20px 32px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  color: #606060;
+  
+  .breadcrumb-item {
+    color: #606060;
+    
+    &.active {
+      color: #3f51b5;
+      font-weight: 500;
+    }
+  }
+  
+  .breadcrumb-separator {
+    margin: 0 8px;
+    font-size: 20px;
+    color: #999;
+  }
+}
+
+// ================= CONTENT CARD =================
+.content-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  
+  mat-card-content {
+    padding: 0 !important;
+  }
+}
+
+.card-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #fafafa;
+  
+  .card-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1a237e;
+  }
+}
+
+// ================= LOADING SPINNER =================
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+
+  p {
+    margin-top: 20px;
+    color: #5f6368;
+    font-size: 16px;
+  }
+}
+
+// ================= TABLE STYLING =================
+.table-container {
+  overflow-x: auto;
+  
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f5f5f5;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #bdbdbd;
+    border-radius: 4px;
+    
+    &:hover {
+      background: #9e9e9e;
+    }
+  }
+}
+
+.modern-table {
+  width: 100%;
+  min-width: 1200px;
+  
+  // Header styling
+  .mat-mdc-header-row {
+    background-color: #fafafa;
+    height: 56px;
+  }
+  
+  .mat-mdc-header-cell {
+    font-size: 14px;
+    font-weight: 600;
+    color: #616161;
+    letter-spacing: 0.3px;
+    border-bottom: 2px solid #e0e0e0;
+    padding: 0 16px;
+    
+    &:first-child {
+      padding-left: 32px;
+    }
+    
+    &:last-child {
+      padding-right: 32px;
+    }
+  }
+  
+  // Row styling
+  .mat-mdc-row {
+    height: 64px;
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background-color: #f5f5f5;
+    }
+    
+    &:not(:last-child) {
+      border-bottom: 1px solid #eeeeee;
+    }
+  }
+  
+  .mat-mdc-cell {
+    font-size: 14px;
+    color: #424242;
+    padding: 0 16px;
+    
+    &:first-child {
+      padding-left: 32px;
+    }
+    
+    &:last-child {
+      padding-right: 32px;
+    }
+  }
+  
+  // Remove default Material table shadows
+  &.mat-elevation-z1 {
+    box-shadow: none;
+  }
+}
+
+// ================= ACTION BAR AT BOTTOM RIGHT =================
+.action-bar-bottom {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  padding: 24px 32px;
+  border-top: 1px solid #fafafa;
+  
+  .action-button {
+    height: 44px;
+    padding: 0 24px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    
+    &.primary-button {
+      background-color: #26a69a;
+      color: white;
+      
+      &:hover {
+        background-color: #2bbbad;
+      }
+    }
+  }
+}
+
+// ================= COLUMN SPECIFIC STYLES =================
+.mat-column-quoteId {
+  max-width: 100px;
+  width: 100px;
+  font-weight: 500;
+  color: #616161;
+}
+
+.mat-column-quoteRef {
+  min-width: 150px;
+  font-weight: 500;
+  color: #212121;
+}
+
+.mat-column-customerId {
+  max-width: 120px;
+  width: 120px;
+  color: #616161;
+}
+
+.mat-column-customerName {
+  min-width: 200px;
+  font-weight: 500;
+}
+
+.mat-column-quoteDate {
+  min-width: 130px;
+}
+
+.mat-column-totalQuantity {
+  min-width: 140px;
+  text-align: right;
+}
+
+.mat-column-totalValue {
+  min-width: 150px;
+  color: #3dd5c8;
+  font-weight: 600;
+  text-align: right;
+}
+
+.mat-column-actions {
+  width: 120px;
+  text-align: center;
+}
+
+// ================= NO ITEMS MESSAGE =================
+.no-items-message {
+  text-align: center;
+  padding: 80px 40px;
+  color: #666;
+  
+  mat-icon {
+    font-size: 72px;
+    width: 72px;
+    height: 72px;
+    color: #bdbdbd;
+    margin-bottom: 24px;
+  }
+  
+  p {
+    font-size: 16px;
+    margin: 12px 0;
+    
+    &:first-of-type {
+      font-weight: 600;
+      color: #424242;
+      font-size: 18px;
+    }
+
+    &:last-of-type {
+      color: #757575;
+      font-size: 14px;
+    }
+  }
+}
+
+// ================= RESPONSIVE DESIGN =================
+@media screen and (max-width: 1024px) {
+  .page-header {
+    padding: 16px 20px;
+  }
+  
+  .card-header {
+    padding: 20px 24px;
+  }
+  
+  .action-bar-bottom {
+    padding: 20px 24px;
+  }
+  
+  .modern-table {
+    .mat-mdc-header-cell,
+    .mat-mdc-cell {
+      &:first-child {
+        padding-left: 24px;
+      }
+      
+      &:last-child {
+        padding-right: 24px;
+      }
+    }
+  }
+
+  .no-items-message {
+    padding: 60px 32px;
+  }
+}

@@ -1,0 +1,129 @@
+<div class="user-add-container">
+  <div class="breadcrumb-container">
+    <nav class="breadcrumb">
+      <a href="/admin" class="breadcrumb-link">Admin</a>
+      <span class="breadcrumb-separator">›</span>
+      <span class="breadcrumb-link">Customers</span>
+      <span class="breadcrumb-separator">›</span>
+      <span class="breadcrumb-current">Add Customer</span>
+    </nav>
+  </div>
+
+  <div class="page-header">
+    <h1 class="page-title">Add Customer</h1>
+  </div>
+
+  <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="user-form">
+    <div class="form-row">
+      <label class="form-label">First Name</label>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          class="form-input" 
+          formControlName="name"
+          placeholder="First Name">
+        <div class="input-underline"></div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Last Name</label>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          class="form-input" 
+          formControlName="address1"
+          placeholder="Last Name">
+        <div class="input-underline"></div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Phone Number</label>
+      <div class="input-wrapper">
+        <input 
+          type="tel" 
+          class="form-input" 
+          formControlName="contactNumber"
+          placeholder="Phone Number">
+        <div class="input-underline"></div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">E-Mail</label>
+      <div class="input-wrapper">
+        <input 
+          type="email" 
+          class="form-input" 
+          formControlName="emailId"
+          placeholder="E-Mail">
+        <div class="input-underline"></div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Address Line 1</label>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          class="form-input" 
+          formControlName="address2"
+          placeholder="Address Line 1">
+        <div class="input-underline"></div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Address Line 2</label>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          class="form-input" 
+          formControlName="city"
+          placeholder="Address Line 2">
+        <div class="input-underline"></div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">City</label>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          class="form-input" 
+          formControlName="country"
+          placeholder="City">
+        <div class="input-underline"></div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Website URL</label>
+      <div class="input-wrapper">
+        <input 
+          type="url" 
+          class="form-input" 
+          formControlName="webUrl"
+          placeholder="Website URL">
+        <div class="input-underline"></div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button 
+        type="button" 
+        class="btn btn-cancel" 
+        (click)="onCancel()"
+        [disabled]="isSubmitting">
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-submit" 
+        [disabled]="!customerForm.valid || isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save' }}
+      </button>
+    </div>
+  </form>
+</div>

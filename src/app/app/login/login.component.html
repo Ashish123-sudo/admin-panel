@@ -1,0 +1,58 @@
+<div class="login-page">
+
+  <!-- LEFT PANEL -->
+  <div class="login-left">
+
+    <div class="login-box">
+
+      <div class="tabs">
+        <span class="active">Login</span>
+        <span>New User</span>
+      </div>
+
+      <h1>Welcome!</h1>
+
+      <button class="google-btn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
+        Sign in with Google
+      </button>
+
+      <div class="divider">
+        <span></span>
+        <p>or</p>
+        <span></span>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="login()">
+
+        <label>Email Address *</label>
+        <input formControlName="email">
+
+        <label>Password *</label>
+        <input type="password" formControlName="password">
+
+        <div class="actions">
+          <button type="submit" class="login-btn">Login</button>
+          <a class="forgot">Forget password</a>
+        </div>
+
+        <p class="error" *ngIf="error">{{ error }}</p>
+
+      </form>
+
+      <p class="copyright">© 2014-2026 Your Company</p>
+
+    </div>
+    
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="login-right">
+    <div class="branding">
+      <h2>Angular Material Admin</h2>
+    </div>
+  </div>
+
+</div>
+

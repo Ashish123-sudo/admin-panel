@@ -1,0 +1,152 @@
+<!-- ================= BREADCRUMB NAVIGATION ================= -->
+<div class="page-header">
+  <div class="breadcrumb">
+    <span class="breadcrumb-item">Admin</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-item">Customers</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-item active">Customer List</span>
+  </div>
+</div>
+
+<!-- ================= MAIN CONTENT CARD ================= -->
+<mat-card class="content-card">
+  
+  <div class="card-header">
+    <h2 class="card-title">Customers</h2>
+  </div>
+
+  <mat-card-content>
+
+    <!-- TABLE SCROLL AREA -->
+    <div class="table-container">
+
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        class="modern-table">
+
+        <!-- ================= SELECT COLUMN ================= -->
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox
+              (change)="toggleAllRows()"
+              [checked]="isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </th>
+
+          <td mat-cell *matCellDef="let row">
+            <mat-checkbox
+              (click)="$event.stopPropagation()"
+              (change)="selection.toggle(row)"
+              [checked]="selection.isSelected(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <!-- ================= ID ================= -->
+        <ng-container matColumnDef="customerId">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let c">{{ c.customerId }}</td>
+        </ng-container>
+
+        <!-- ================= NAME ================= -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let c">{{ c.name }}</td>
+        </ng-container>
+
+        <!-- ================= ADDRESS 1 ================= -->
+        <ng-container matColumnDef="address1">
+          <th mat-header-cell *matHeaderCellDef>Address 1</th>
+          <td mat-cell *matCellDef="let c">{{ c.address1 }}</td>
+        </ng-container>
+
+        <!-- ================= ADDRESS 2 ================= -->
+        <ng-container matColumnDef="address2">
+          <th mat-header-cell *matHeaderCellDef>Address 2</th>
+          <td mat-cell *matCellDef="let c">{{ c.address2 }}</td>
+        </ng-container>
+
+        <!-- ================= CITY ================= -->
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef>City</th>
+          <td mat-cell *matCellDef="let c">{{ c.city }}</td>
+        </ng-container>
+
+        <!-- ================= STATE ================= -->
+        <ng-container matColumnDef="stateProvince">
+          <th mat-header-cell *matHeaderCellDef>State</th>
+          <td mat-cell *matCellDef="let c">{{ c.stateProvince }}</td>
+        </ng-container>
+
+        <!-- ================= COUNTRY ================= -->
+        <ng-container matColumnDef="country">
+          <th mat-header-cell *matHeaderCellDef>Country</th>
+          <td mat-cell *matCellDef="let c">{{ c.country }}</td>
+        </ng-container>
+
+        <!-- ================= CONTACT ================= -->
+        <ng-container matColumnDef="contactNumber">
+          <th mat-header-cell *matHeaderCellDef>Phone Number</th>
+          <td mat-cell *matCellDef="let c">{{ c.contactNumber }}</td>
+        </ng-container>
+
+        <!-- ================= EMAIL ================= -->
+        <ng-container matColumnDef="emailId">
+          <th mat-header-cell *matHeaderCellDef>E-Mail</th>
+          <td mat-cell *matCellDef="let c">{{ c.emailId }}</td>
+        </ng-container>
+
+        <!-- ================= WEBSITE ================= -->
+        <ng-container matColumnDef="webUrl">
+          <th mat-header-cell *matHeaderCellDef>Website</th>
+          <td mat-cell *matCellDef="let c">{{ c.webUrl }}</td>
+        </ng-container>
+
+        <!-- ================= ACTIONS ================= -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let c">
+            <button
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/customers/edit', c.customerId]"
+              matTooltip="Edit Customer">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- ================= HEADER & ROWS ================= -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+
+      </table>
+
+    </div>
+
+    <!-- ================= ACTION BUTTONS (MOVED TO BOTTOM RIGHT) ================= -->
+    <div class="action-bar-bottom">
+      <button
+        mat-raised-button
+        color="warn"
+        (click)="deleteSelected()"
+        [disabled]="selection.selected.length === 0"
+        class="action-button delete-button">
+        DELETE ({{ selection.selected.length }})
+      </button>
+      
+      <button
+        mat-raised-button
+        color="primary"
+        [routerLink]="['/customers/add']"
+        class="action-button primary-button">
+        NEW
+      </button>
+    </div>
+
+  </mat-card-content>
+
+</mat-card>

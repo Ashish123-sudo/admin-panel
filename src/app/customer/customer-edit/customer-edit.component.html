@@ -1,0 +1,152 @@
+<div class="edit-customer-container">
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-bar">
+    <nav class="breadcrumb">
+      <a routerLink="/admin" class="breadcrumb-link">Admin</a>
+      <span class="breadcrumb-separator">›</span>
+      <span class="breadcrumb-link">Customers</span>
+      <span class="breadcrumb-separator">›</span>
+      <span class="breadcrumb-current">Edit Customer</span>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <h1 class="page-title">Edit Customer</h1>
+
+    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="customer-form">
+      
+      <!-- Name -->
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <div class="input-container">
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="name"
+            placeholder="Enter name">
+          <div class="field-error" *ngIf="customerForm.get('name')?.invalid && customerForm.get('name')?.touched">
+            Name is required
+          </div>
+        </div>
+      </div>
+
+      <!-- Address Line 1 -->
+      <div class="form-group">
+        <label class="form-label">Address Line 1</label>
+        <div class="input-container">
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="address1"
+            placeholder="Enter address line 1">
+        </div>
+      </div>
+
+      <!-- Address Line 2 -->
+      <div class="form-group">
+        <label class="form-label">Address Line 2</label>
+        <div class="input-container">
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="address2"
+            placeholder="Enter address line 2">
+        </div>
+      </div>
+
+      <!-- City -->
+      <div class="form-group">
+        <label class="form-label">City</label>
+        <div class="input-container">
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="city"
+            placeholder="Enter city">
+        </div>
+      </div>
+
+      <!-- State -->
+      <div class="form-group">
+        <label class="form-label">State</label>
+        <div class="input-container">
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="stateProvince"
+            placeholder="Enter state">
+        </div>
+      </div>
+
+      <!-- Country -->
+      <div class="form-group">
+        <label class="form-label">Country</label>
+        <div class="input-container">
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="country"
+            placeholder="Enter country">
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="form-group">
+        <label class="form-label">Contact</label>
+        <div class="input-container">
+          <input 
+            type="tel" 
+            class="form-control" 
+            formControlName="contactNumber"
+            placeholder="Enter contact number">
+        </div>
+      </div>
+
+      <!-- E-Mail -->
+      <div class="form-group">
+        <label class="form-label">E-Mail</label>
+        <div class="input-container">
+          <input 
+            type="email" 
+            class="form-control" 
+            formControlName="emailId"
+            placeholder="Enter email">
+          <div class="field-error" *ngIf="customerForm.get('emailId')?.invalid && customerForm.get('emailId')?.touched">
+            Please enter a valid email
+          </div>
+        </div>
+      </div>
+
+      <!-- Website -->
+      <div class="form-group">
+        <label class="form-label">Website</label>
+        <div class="input-container">
+          <input 
+            type="url" 
+            class="form-control" 
+            formControlName="webUrl"
+            placeholder="Enter website URL">
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn-save" 
+          [disabled]="!customerForm.valid || isSubmitting">
+          {{ isSubmitting ? 'UPDATING...' : 'UPDATE' }}
+        </button>
+        <button 
+          type="button" 
+          class="btn-cancel" 
+          (click)="onCancel()"
+          [disabled]="isSubmitting">
+          Cancel
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

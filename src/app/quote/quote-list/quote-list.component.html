@@ -1,0 +1,119 @@
+<!-- ================= BREADCRUMB NAVIGATION ================= -->
+<div class="page-header">
+  <div class="breadcrumb">
+    <span class="breadcrumb-item">Admin</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-item">Quotes</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-item active">Quote List</span>
+  </div>
+</div>
+
+<!-- ================= MAIN CONTENT CARD ================= -->
+<mat-card class="content-card">
+  
+  <div class="card-header">
+    <h2 class="card-title">Quote List</h2>
+  </div>
+
+  <mat-card-content>
+
+    <!-- Loading indicator -->
+    <div *ngIf="isLoading" class="loading-spinner">
+      <mat-spinner></mat-spinner>
+      <p>Loading quotes...</p>
+    </div>
+
+    <!-- Quote table -->
+    <div *ngIf="!isLoading && dataSource.data.length > 0" class="table-container">
+      <table mat-table [dataSource]="dataSource" class="modern-table">
+        
+        <!-- Quote ID Column -->
+        <ng-container matColumnDef="quoteId">
+          <th mat-header-cell *matHeaderCellDef>Quote ID</th>
+          <td mat-cell *matCellDef="let quote">{{quote.quoteId}}</td>
+        </ng-container>
+        
+        <!-- Quote Reference Column -->
+        <ng-container matColumnDef="quoteRef">
+          <th mat-header-cell *matHeaderCellDef>Quote Reference</th>
+          <td mat-cell *matCellDef="let quote">{{quote.quoteRef}}</td>
+        </ng-container>
+        
+        <!-- Customer ID Column -->
+        <ng-container matColumnDef="customerId">
+          <th mat-header-cell *matHeaderCellDef>Customer ID</th>
+          <td mat-cell *matCellDef="let quote">{{quote.customerId}}</td>
+        </ng-container>
+
+        <!-- Customer Name Column -->
+        <ng-container matColumnDef="customerName">
+          <th mat-header-cell *matHeaderCellDef>Customer Name</th>
+          <td mat-cell *matCellDef="let quote">{{quote.customerName}}</td>
+        </ng-container>
+        
+        <!-- Quote Date Column -->
+        <ng-container matColumnDef="quoteDate">
+          <th mat-header-cell *matHeaderCellDef>Quote Date</th>
+          <td mat-cell *matCellDef="let quote">{{quote.quoteDate | date:'dd/MM/yyyy'}}</td>
+        </ng-container>
+        
+        <!-- Total Quantity Column -->
+        <ng-container matColumnDef="totalQuantity">
+          <th mat-header-cell *matHeaderCellDef>Total Quantity</th>
+          <td mat-cell *matCellDef="let quote">{{quote.totalQuantity}}</td>
+        </ng-container>
+        
+        <!-- Total Value Column -->
+        <ng-container matColumnDef="totalValue">
+          <th mat-header-cell *matHeaderCellDef>Total Value</th>
+          <td mat-cell *matCellDef="let quote">{{quote.totalValue | currency:'INR':'symbol':'1.2-2'}}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let quote">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="onEdit(quote)"
+              matTooltip="Edit Quote">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="onDelete(quote)"
+              matTooltip="Delete Quote">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+      </table>
+    </div>
+
+    <!-- No data message -->
+    <div *ngIf="!isLoading && dataSource.data.length === 0" class="no-items-message">
+      <mat-icon>description</mat-icon>
+      <p>No quotes found in the database.</p>
+      <p>Click "NEW" button below to create your first quote.</p>
+    </div>
+
+    <!-- ================= ACTION BUTTON (MOVED TO BOTTOM RIGHT) ================= -->
+    <div class="action-bar-bottom" *ngIf="!isLoading">
+      <button
+        mat-raised-button
+        color="primary"
+        [routerLink]="['/quotes/add']"
+        class="action-button primary-button">
+        NEW
+      </button>
+    </div>
+
+  </mat-card-content>
+
+</mat-card>

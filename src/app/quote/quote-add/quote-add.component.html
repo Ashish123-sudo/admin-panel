@@ -1,0 +1,179 @@
+<!-- ================= BREADCRUMB NAVIGATION ================= -->
+<div class="page-header">
+  <div class="breadcrumb">
+    <span class="breadcrumb-item">Admin</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-item">Quotes</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-item active">Add Quote</span>
+  </div>
+</div>
+
+<div class="quote-add-container">
+  <mat-card class="content-card">
+    <div class="card-header">
+      <h2 class="card-title">Add New Quote</h2>
+    </div>
+
+    <mat-card-content>
+      <form [formGroup]="quoteForm" (ngSubmit)="onSubmit()">
+        
+        <!-- QUOTE HEADER SECTION -->
+        <div class="section-title">Quote Information</div>
+        
+        <div class="form-row">
+          <!-- Quote Reference -->
+          <div class="form-group-clean">
+            <label class="form-label-clean">Quote Reference</label>
+            <input 
+              type="text"
+              class="form-control-clean"
+              formControlName="quoteRef"
+              placeholder="Auto-generated"
+              readonly>
+          </div>
+
+          <!-- Customer Selection -->
+          <div class="form-group-clean">
+            <label class="form-label-clean">Customer *</label>
+            <select class="form-control-clean" formControlName="customerId" required>
+              <option value="">Select Customer</option>
+              <option *ngFor="let customer of customers" [value]="customer.customerId">
+                {{customer.name}} (ID: {{customer.customerId}})
+              </option>
+            </select>
+            <div class="field-error" *ngIf="quoteForm.get('customerId')?.invalid && quoteForm.get('customerId')?.touched">
+              Please select a customer
+            </div>
+          </div>
+
+          <!-- Quote Date -->
+          <div class="form-group-clean date-input-wrapper">
+            <label class="form-label-clean">Quote Date **</label>
+            <div class="date-input-container">
+              <input 
+                matInput 
+                [matDatepicker]="picker" 
+                formControlName="quoteDate" 
+                required
+                class="form-control-clean date-input"
+                readonly>
+              <mat-datepicker-toggle [for]="picker" class="date-toggle">
+                <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+              </mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </div>
+            <div class="field-error" *ngIf="quoteForm.get('quoteDate')?.invalid && quoteForm.get('quoteDate')?.touched">
+              Quote date is required
+            </div>
+          </div>
+        </div>
+
+        <!-- ADDED ITEMS TABLE -->
+        <div class="section-title">Quote Items</div>
+
+        <div class="table-container" *ngIf="quoteDetails.length > 0">
+          <table mat-table [dataSource]="quoteDetails.controls" class="items-display-table">
+
+            <!-- Description -->
+            <ng-container matColumnDef="itemDesc">
+              <th mat-header-cell *matHeaderCellDef>Description</th>
+              <td mat-cell *matCellDef="let item">
+                <input matInput [formControl]="item.get('itemDesc')" placeholder="Enter description" />
+              </td>
+            </ng-container>
+
+            <!-- Rate -->
+            <ng-container matColumnDef="itemUnitRate">
+              <th mat-header-cell *matHeaderCellDef>Rate</th>
+              <td mat-cell *matCellDef="let item; let i = index">
+                <input
+                  matInput
+                  type="number"
+                  [formControl]="item.get('itemUnitRate')"
+                  (input)="updateItemValue(i)"
+                  placeholder="0.00"
+                />
+              </td>
+            </ng-container>
+
+            <!-- Quantity -->
+            <ng-container matColumnDef="itemQuantity">
+              <th mat-header-cell *matHeaderCellDef>Qty</th>
+              <td mat-cell *matCellDef="let item; let i = index">
+                <input
+                  matInput
+                  type="number"
+                  [formControl]="item.get('itemQuantity')"
+                  (input)="updateItemValue(i)"
+                  placeholder="1"
+                />
+              </td>
+            </ng-container>
+
+            <!-- Value -->
+            <ng-container matColumnDef="itemValue">
+              <th mat-header-cell *matHeaderCellDef>Value</th>
+              <td mat-cell *matCellDef="let item">
+                {{ item.get('itemValue')?.value | currency:'INR':'symbol':'1.2-2' }}
+              </td>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let item; let i = index">
+
+                <button mat-icon-button color="primary" type="button" (click)="addRow()" [disabled]="!canAddRow()">
+                  <mat-icon>add</mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  color="warn"
+                  type="button"
+                  (click)="removeLineItem(i)"
+                  [disabled]="quoteDetails.length === 1">
+                  <mat-icon>delete</mat-icon>
+                </button>
+
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+
+        <!-- No items message -->
+        <div *ngIf="quoteDetails.length === 0" class="no-items-message">
+          <mat-icon>inbox</mat-icon>
+          <p>No items added yet.</p>
+        </div>
+        
+        <!-- TOTALS SECTION -->
+        <div class="totals-section" *ngIf="quoteDetails.length > 0">
+          <div class="total-row">
+            <span class="total-label">Total Quantity:</span>
+            <span class="total-value">{{getTotalQuantity()}}</span>
+          </div>
+          <div class="total-row">
+            <span class="total-label">Total Value:</span>
+            <span class="total-value">{{getTotalValue() | currency:'INR':'symbol':'1.2-2'}}</span>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting || quoteDetails.length === 0">
+            {{ isSubmitting ? 'Saving...' : 'Save Quote' }}
+          </button>
+          <button mat-raised-button type="button" (click)="onCancel()" [disabled]="isSubmitting">
+            Cancel
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

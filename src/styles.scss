@@ -1,1 +1,354 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Roboto', 'Segoe UI', Tahoma, sans-serif;
+  background-color: #f5f7fa;
+}
+
+/* ================= TOP BAR ================= */
+.topbar {
+  background-color: #667bf6 !important;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  margin-left: 12px;
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* ================= LAYOUT ================= */
+.layout {
+  height: calc(100vh - 64px);
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+  width: 220px;
+  background: #f8f9fb;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+  border-right: 1px solid #e8eaed;
+}
+
+/* ================= CONTENT AREA ================= */
+.main-content {
+  background: #f0f2f5;
+}
+
+.content-wrapper {
+  padding: 24px;
+  min-height: 100%;
+}
+
+/* ================= SIDEBAR MENU STYLING ================= */
+
+mat-nav-list {
+  padding: 8px 0;
+}
+
+.menu-group {
+  margin-bottom: 4px;
+}
+
+/* ================= PARENT MENU ================= */
+
+.parent-menu {
+  height: 44px !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  transition: all 0.2s ease;
+  position: relative;
+  font-weight: 500;
+  color: #5f6368;
+  
+  &:hover {
+    background-color: #e8eaed !important;
+  }
+  
+  &.active {
+    background-color: #e8eaed !important;
+    
+    .menu-icon {
+      color: #5f81f6;
+    }
+  }
+  
+  &:focus,
+  &:active {
+    border: none !important;
+    outline: none !important;
+  }
+}
+
+.menu-icon {
+  margin-right: 12px !important;
+  color: #5f6368;
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.menu-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #3c4043;
+  line-height: 20px;
+  vertical-align: middle;
+}
+
+.arrow-icon {
+  margin-left: 8px !important;
+  margin-right: 0 !important;
+  color: #5f6368;
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  vertical-align: middle;
+  
+  &.rotate {
+    transform: rotate(180deg);
+  }
+}
+
+/* ================= SUBMENU WRAPPER ================= */
+
+.submenu-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background-color: #f0f2f5;
+  
+  &.open {
+    max-height: 500px;
+  }
+}
+
+/* ================= SUBMENU ITEMS ================= */
+
+.submenu-item {
+  height: 36px !important;
+  padding: 0 12px 0 48px !important;
+  font-size: 14px;
+  color: #5f6368;
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: all 0.2s ease;
+  position: relative;
+  
+  &:hover {
+    background-color: #e8eaed !important;
+  }
+  
+  span:not(.submenu-dot) {
+    font-size: 14px;
+    color: #5f6368;
+    line-height: 1;
+  }
+}
+
+.submenu-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #9aa0a6;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+/* Active submenu */
+.active-submenu {
+  background-color: #e8f0fe !important;
+  
+  span:not(.submenu-dot) {
+    color: #1967d2 !important;
+    font-weight: 500;
+  }
+  
+  .submenu-dot {
+    background-color: #1967d2;
+  }
+}
+
+/* ================= MAT-LIST-ITEM OVERRIDE ================= */
+
+.mat-mdc-list-item {
+  --mdc-list-list-item-label-text-color: #5f6368;
+  --mdc-list-list-item-hover-label-text-color: #3c4043;
+  
+  .mdc-list-item__content {
+    padding: 0 !important;
+  }
+}
+
+.mat-mdc-list-item:hover {
+  --mdc-list-list-item-hover-state-layer-color: transparent;
+}
+
+/* Remove default Material ripple effect for cleaner look */
+.mat-mdc-list-item .mat-ripple,
+.mat-mdc-list-item .mat-mdc-list-item-ripple {
+  display: none;
+}
+
+/* Remove default focus styles */
+.mat-mdc-list-item.mat-mdc-focus-indicator::before {
+  content: none;
+}
+
+/* ================= SCROLLBAR ================= */
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #dadce0;
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #bdc1c6;
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.submenu-wrapper.open .submenu-item {
+  animation: slideDown 0.3s ease forwards;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 220px;
+  }
+  
+  .content-wrapper {
+    padding: 16px;
+  }
+}
+
+/* ================= GLOBAL CUSTOM OUTLINED BUTTON STYLES ================= */
+
+/* ================= MODERN LOGOUT DIALOG ================= */
+
+/* Dialog container */
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: 12px !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
+  overflow: hidden;
+}
+
+/* Wrapper */
+.modern-dialog {
+  min-width: 320px;
+}
+
+/* Header */
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px 12px 24px;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Icon bubble */
+.dialog-icon {
+  color: #ef4444;
+  background: #fee2e2;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* Body */
+.dialog-body {
+  padding: 0 24px 20px 24px;
+  color: #4b5563;
+  font-size: 14px;
+}
+
+/* Actions container */
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px 24px 24px;
+  border-top: 1px solid #eee;
+}
+
+/* Cancel button */
+.dialog-cancel-btn {
+  border-radius: 6px !important;
+  height: 40px;
+  padding: 0 20px;
+  font-weight: 600;
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+}
+
+.dialog-cancel-btn:hover {
+  background: #e5e7eb !important;
+}
+
+/* Logout button */
+.dialog-logout-btn {
+  border-radius: 6px !important;
+  height: 40px;
+  padding: 0 20px;
+  font-weight: 600;
+  background-color: #ef4444 !important;
+  color: white !important;
+}
+
+.dialog-logout-btn:hover {
+  background-color: #dc2626 !important;
+}

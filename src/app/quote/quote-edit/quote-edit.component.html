@@ -1,0 +1,190 @@
+<!-- ================= BREADCRUMB NAVIGATION ================= -->
+<div class="page-header">
+  <div class="breadcrumb">
+    <span class="breadcrumb-item">Admin</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-item">Quotes</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-item active">Edit Quote</span>
+  </div>
+</div>
+
+<div class="quote-edit-container">
+  <mat-card class="content-card">
+    <div class="card-header">
+      <h2 class="card-title">Edit Quote</h2>
+    </div>
+
+    <mat-card-content>
+      
+      <!-- SEARCH SECTION -->
+      <div class="section-title">Find Quote</div>
+      
+      <div class="search-form">
+        <div class="search-row">
+          <div class="form-group-clean">
+            <label class="form-label-clean">Search By</label>
+            <select class="form-control-clean" [(ngModel)]="searchType">
+              <option value="ref">Quote Reference</option>
+              <option value="customer">Customer Name</option>
+            </select>
+          </div>
+
+          <div class="form-group-clean">
+            <label class="form-label-clean">{{ searchType === 'ref' ? 'Quote Reference' : 'Customer Name' }}</label>
+            <input 
+              type="text"
+              class="form-control-clean"
+              [(ngModel)]="searchValue" 
+              [placeholder]="searchType === 'ref' ? 'e.g., Q-100226-001' : 'e.g., Ashish'">
+          </div>
+
+          <button class="btn-search" (click)="search()">
+            <mat-icon>search</mat-icon>
+            SEARCH
+          </button>
+        </div>
+      </div>
+
+      <!-- CUSTOMER SELECTION (when searching by customer) -->
+      <div *ngIf="searchType === 'customer' && customerQuotes.length > 0" class="customer-quotes-section">
+        <div class="section-title">Select a Quote</div>
+        
+        <div class="quotes-grid">
+          <mat-card 
+            *ngFor="let quote of customerQuotes" 
+            class="quote-card"
+            (click)="selectQuote(quote)"
+            [class.selected]="selectedQuote?.quoteId === quote.quoteId">
+            <mat-card-content>
+              <div class="quote-card-header">
+                <span class="quote-ref">{{ quote.quoteRef }}</span>
+                <span class="quote-date">{{ quote.quoteDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="quote-details">
+                <span>Qty: {{ quote.totalQuantity }}</span>
+                <span class="quote-value">{{ quote.totalValue | currency:'INR':'symbol':'1.2-2' }}</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
+      <!-- QUOTE ITEMS TABLE -->
+      <div *ngIf="dataSource.data.length > 0">
+        <div class="section-title">Quote Items</div>
+
+        <div class="table-container">
+          <table mat-table [dataSource]="dataSource" class="items-display-table">
+            
+            <!-- Item Description -->
+            <ng-container matColumnDef="itemDesc">
+              <th mat-header-cell *matHeaderCellDef>Description</th>
+              <td mat-cell *matCellDef="let item">
+                <input 
+                  type="text"
+                  [(ngModel)]="item.itemDesc"
+                  (blur)="updateItem(item)"
+                  class="editable-input"
+                  placeholder="Enter description"
+                />
+              </td>
+            </ng-container>
+
+            <!-- Unit Rate -->
+            <ng-container matColumnDef="itemUnitRate">
+              <th mat-header-cell *matHeaderCellDef>Rate</th>
+              <td mat-cell *matCellDef="let item">
+                <input 
+                  type="number"
+                  [(ngModel)]="item.itemUnitRate"
+                  (ngModelChange)="calculateItemValue(item)"
+                  (blur)="updateItem(item)"
+                  class="editable-input"
+                  placeholder="0.00"
+                />
+              </td>
+            </ng-container>
+
+            <!-- Quantity -->
+            <ng-container matColumnDef="itemQuantity">
+              <th mat-header-cell *matHeaderCellDef>Qty</th>
+              <td mat-cell *matCellDef="let item">
+                <input 
+                  type="number"
+                  [(ngModel)]="item.itemQuantity"
+                  (ngModelChange)="calculateItemValue(item)"
+                  (blur)="updateItem(item)"
+                  class="editable-input"
+                  placeholder="1"
+                />
+              </td>
+            </ng-container>
+
+            <!-- Item Value -->
+            <ng-container matColumnDef="itemValue">
+              <th mat-header-cell *matHeaderCellDef>Value</th>
+              <td mat-cell *matCellDef="let item">
+                {{ item.itemValue | currency:'INR':'symbol':'1.2-2' }}
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let item">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="addNewItem()"
+                  matTooltip="Add New Item">
+                  <mat-icon>add</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteDetail(item.slNo)"
+                  matTooltip="Delete Item">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+
+        <!-- TOTALS SECTION -->
+        <div class="totals-section">
+          <div class="total-row">
+            <span class="total-label">Total Quantity:</span>
+            <span class="total-value">{{ getTotalQuantity() }}</span>
+          </div>
+          <div class="total-row">
+            <span class="total-label">Total Value:</span>
+            <span class="total-value">{{ getTotalValue() | currency:'INR':'symbol':'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="form-actions">
+          <button mat-raised-button color="primary" (click)="saveChanges()">
+            Save Changes
+          </button>
+          <button mat-raised-button (click)="cancelEdit()">
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <!-- No data message -->
+      <div *ngIf="dataSource.data.length === 0 && searchAttempted && customerQuotes.length === 0" class="no-items-message">
+        <mat-icon>search_off</mat-icon>
+        <p>No quotes found.</p>
+        <p>Try searching with a different {{ searchType === 'ref' ? 'Quote Reference' : 'Customer Name' }}.</p>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
