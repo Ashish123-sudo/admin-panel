@@ -8,7 +8,7 @@ import { Customer } from '../models/customer.model';
   providedIn: 'root'
 })
 export class CustomerService {
-  private apiUrl = 'http://localhost:8080/api/customers';
+  private apiUrl = 'https://quote-backend-production-c1be.up.railway.app';
 
   constructor(private http: HttpClient) {}
 

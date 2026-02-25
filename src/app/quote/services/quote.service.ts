@@ -8,7 +8,7 @@ import { QuoteHeader } from '../models/quote.model';
 })
 export class QuoteService {
 
-  private apiUrl = 'http://localhost:8080/api/quotes';
+  private apiUrl = 'https://quote-backend-production-c1be.up.railway.app';
 
   constructor(private http: HttpClient) { }
 
