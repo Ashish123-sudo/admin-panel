@@ -8,6 +8,7 @@ import { Customer } from '../models/customer.model';
   providedIn: 'root'
 })
 export class CustomerService {
+  // Use the Railway backend URL
   private apiUrl = 'https://quote-backend-production-c1be.up.railway.app/api/customers';
 
   constructor(private http: HttpClient) {}
@@ -45,7 +46,7 @@ export class CustomerService {
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unknown error occurred';
     let errorType = 'UNKNOWN';
-    
+
     if (error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = `Client Error: ${error.error.message}`;
@@ -53,7 +54,6 @@ export class CustomerService {
     } else {
       // Backend error
       if (error.error && typeof error.error === 'object') {
-        // Structured error response from backend
         errorMessage = error.error.message || errorMessage;
         errorType = error.error.error || errorType;
       } else {
@@ -61,9 +61,9 @@ export class CustomerService {
         errorType = 'SERVER_ERROR';
       }
     }
-    
+
     console.error('HTTP Error:', { type: errorType, message: errorMessage, fullError: error });
-    
+
     return throwError(() => ({
       type: errorType,
       message: errorMessage,

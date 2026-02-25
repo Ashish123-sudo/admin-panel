@@ -7,7 +7,7 @@ import { QuoteHeader } from '../models/quote.model';
   providedIn: 'root'
 })
 export class QuoteService {
-
+  // Railway backend URL
   private apiUrl = 'https://quote-backend-production-c1be.up.railway.app/api/quotes';
 
   constructor(private http: HttpClient) { }
@@ -61,5 +61,4 @@ export class QuoteService {
   deleteQuoteDetail(slNo: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/detail/${slNo}`);
   }
-
 }
