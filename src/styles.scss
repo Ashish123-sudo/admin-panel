@@ -7,301 +7,232 @@ html, body {
   background-color: #f5f7fa;
 }
 
-/* ================= TOP BAR ================= */
-.topbar {
-  background-color: #667bf6 !important;
-  color: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.title {
-  margin-left: 12px;
-  font-weight: 500;
-  font-size: 20px;
-}
-
-.spacer {
-  flex: 1 1 auto;
-}
-
-/* ================= LAYOUT ================= */
-.layout {
-  height: calc(100vh - 64px);
+/* ================= APP LAYOUT ================= */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* ================= SIDEBAR ================= */
 .sidebar {
-  width: 220px;
-  background: #f8f9fb;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
-  border-right: 1px solid #e8eaed;
+  width: 240px;
+  min-width: 240px;
+  background: #1f2937;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* ================= CONTENT AREA ================= */
-.main-content {
-  background: #f0f2f5;
+/* Logo */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+
+  .logo-icon {
+    color: #60a5fa;
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+  }
+
+  .logo-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
 }
 
-.content-wrapper {
-  padding: 24px;
-  min-height: 100%;
-}
-
-/* ================= SIDEBAR MENU STYLING ================= */
-
-mat-nav-list {
+/* Nav */
+.sidebar-nav {
+  flex: 1;
   padding: 8px 0;
 }
 
 .menu-group {
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
-/* ================= PARENT MENU ================= */
+/* Nav items */
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  background: transparent;
+  border: none;
+  color: #d1d5db;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.2s;
 
-.parent-menu {
-  height: 44px !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-  padding: 0 12px !important;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  background-color: transparent !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  transition: all 0.2s ease;
-  position: relative;
-  font-weight: 500;
-  color: #5f6368;
-  
   &:hover {
-    background-color: #e8eaed !important;
+    background: rgba(255,255,255,0.07);
+    color: #fff;
   }
-  
+
   &.active {
-    background-color: #e8eaed !important;
-    
-    .menu-icon {
-      color: #5f81f6;
-    }
-  }
-  
-  &:focus,
-  &:active {
-    border: none !important;
-    outline: none !important;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+
+    .nav-icon { color: #60a5fa; }
   }
 }
 
-.menu-icon {
-  margin-right: 12px !important;
-  color: #5f6368;
-  font-size: 20px !important;
-  width: 20px !important;
-  height: 20px !important;
-  line-height: 20px !important;
+.nav-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #9ca3af;
   flex-shrink: 0;
-  vertical-align: middle;
 }
 
-.menu-text {
-  font-size: 15px;
+.nav-text {
+  flex: 1;
+  font-size: 14px;
   font-weight: 500;
-  color: #3c4043;
-  line-height: 20px;
-  vertical-align: middle;
 }
 
-.arrow-icon {
-  margin-left: 8px !important;
-  margin-right: 0 !important;
-  color: #5f6368;
-  font-size: 20px !important;
-  width: 20px !important;
-  height: 20px !important;
-  line-height: 20px !important;
-  transition: transform 0.3s ease;
-  flex-shrink: 0;
-  vertical-align: middle;
-  
+.nav-arrow {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+  transition: transform 0.25s ease;
+
   &.rotate {
-    transform: rotate(180deg);
+    transform: rotate(90deg);
   }
 }
 
-/* ================= SUBMENU WRAPPER ================= */
-
-.submenu-wrapper {
+/* Submenu */
+.submenu {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
-  background-color: #f0f2f5;
-  
+  background: rgba(0,0,0,0.15);
+
   &.open {
-    max-height: 500px;
+    max-height: 300px;
   }
 }
-
-/* ================= SUBMENU ITEMS ================= */
 
 .submenu-item {
-  height: 36px !important;
-  padding: 0 12px 0 48px !important;
-  font-size: 14px;
-  color: #5f6368;
-  background-color: transparent !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  transition: all 0.2s ease;
-  position: relative;
-  
+  display: block;
+  padding: 9px 16px 9px 46px;
+  font-size: 13px;
+  color: #9ca3af;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+
   &:hover {
-    background-color: #e8eaed !important;
-  }
-  
-  span:not(.submenu-dot) {
-    font-size: 14px;
-    color: #5f6368;
-    line-height: 1;
+    background: rgba(255,255,255,0.06);
+    color: #e5e7eb;
   }
 }
 
-.submenu-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #9aa0a6;
-  margin-right: 10px;
-  flex-shrink: 0;
+.submenu-active {
+  color: #60a5fa !important;
+  background: rgba(96, 165, 250, 0.08) !important;
 }
 
-/* Active submenu */
-.active-submenu {
-  background-color: #e8f0fe !important;
-  
-  span:not(.submenu-dot) {
-    color: #1967d2 !important;
-    font-weight: 500;
-  }
-  
-  .submenu-dot {
-    background-color: #1967d2;
-  }
+/* Footer */
+.sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 8px 0;
 }
 
-/* ================= MAT-LIST-ITEM OVERRIDE ================= */
-
-.mat-mdc-list-item {
-  --mdc-list-list-item-label-text-color: #5f6368;
-  --mdc-list-list-item-hover-label-text-color: #3c4043;
-  
-  .mdc-list-item__content {
-    padding: 0 !important;
-  }
-}
-
-.mat-mdc-list-item:hover {
-  --mdc-list-list-item-hover-state-layer-color: transparent;
-}
-
-/* Remove default Material ripple effect for cleaner look */
-.mat-mdc-list-item .mat-ripple,
-.mat-mdc-list-item .mat-mdc-list-item-ripple {
-  display: none;
-}
-
-/* Remove default focus styles */
-.mat-mdc-list-item.mat-mdc-focus-indicator::before {
-  content: none;
-}
-
-/* ================= SCROLLBAR ================= */
-
-.sidebar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sidebar::-webkit-scrollbar-track {
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
   background: transparent;
-}
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
 
-.sidebar::-webkit-scrollbar-thumb {
-  background: #dadce0;
-  border-radius: 3px;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-  background: #bdc1c6;
-}
-
-/* ================= ANIMATIONS ================= */
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  &:hover {
+    background: rgba(255,255,255,0.07);
+    color: #fff;
   }
 }
 
-.submenu-wrapper.open .submenu-item {
-  animation: slideDown 0.3s ease forwards;
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media (max-width: 768px) {
-  .sidebar {
-    width: 220px;
-  }
-  
-  .content-wrapper {
-    padding: 16px;
-  }
-}
-
-/* ================= GLOBAL CUSTOM OUTLINED BUTTON STYLES ================= */
-
-/* ================= MODERN LOGOUT DIALOG ================= */
-
-/* Dialog container */
-.mat-mdc-dialog-container .mdc-dialog__surface {
-  border-radius: 12px !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
+/* ================= MAIN AREA ================= */
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
-/* Wrapper */
-.modern-dialog {
-  min-width: 320px;
+/* ================= TOP BAR ================= */
+.topbar {
+  height: 56px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  flex-shrink: 0;
+
+  .topbar-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 }
 
-/* Header */
+/* ================= CONTENT AREA ================= */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  background: #f3f4f6;
+  padding: 0px;
+}
+
+/* ================= DIALOG STYLES ================= */
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: 12px !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
+}
+
+.modern-dialog { min-width: 320px; }
+
 .dialog-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px 24px 12px 24px;
+  padding: 20px 24px 12px;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+  }
 }
 
-.dialog-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-/* Icon bubble */
 .dialog-icon {
   color: #ef4444;
   background: #fee2e2;
@@ -309,23 +240,20 @@ mat-nav-list {
   border-radius: 8px;
 }
 
-/* Body */
 .dialog-body {
-  padding: 0 24px 20px 24px;
+  padding: 0 24px 20px;
   color: #4b5563;
   font-size: 14px;
 }
 
-/* Actions container */
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  padding: 16px 24px 24px 24px;
+  padding: 16px 24px 24px;
   border-top: 1px solid #eee;
 }
 
-/* Cancel button */
 .dialog-cancel-btn {
   border-radius: 6px !important;
   height: 40px;
@@ -333,13 +261,10 @@ mat-nav-list {
   font-weight: 600;
   background: #f3f4f6 !important;
   color: #374151 !important;
+
+  &:hover { background: #e5e7eb !important; }
 }
 
-.dialog-cancel-btn:hover {
-  background: #e5e7eb !important;
-}
-
-/* Logout button */
 .dialog-logout-btn {
   border-radius: 6px !important;
   height: 40px;
@@ -347,8 +272,11 @@ mat-nav-list {
   font-weight: 600;
   background-color: #ef4444 !important;
   color: white !important;
+
+  &:hover { background-color: #dc2626 !important; }
 }
 
-.dialog-logout-btn:hover {
-  background-color: #dc2626 !important;
-}
+/* ================= SCROLLBAR ================= */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }

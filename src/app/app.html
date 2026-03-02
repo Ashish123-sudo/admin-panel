@@ -1,70 +1,37 @@
 <!-- ================= AUTH LAYOUT (LOGIN ONLY) ================= -->
 <ng-container *ngIf="!isLoginPage; else loginOnly">
 
-  <!-- ================= TOP BAR ================= -->
-  <mat-toolbar color="primary" class="topbar">
-
-    <button mat-icon-button (click)="sidenav.toggle()">
-      <mat-icon>menu</mat-icon>
-    </button>
-
-    <span class="title">Angular Material Admin</span>
-    <span class="spacer"></span>
-
-    <button mat-icon-button>
-      <mat-icon>search</mat-icon>
-    </button>
-
-    <button mat-icon-button>
-      <mat-icon>notifications</mat-icon>
-    </button>
-
-    <button mat-icon-button [matMenuTriggerFor]="accountMenu">
-      <mat-icon>account_circle</mat-icon>
-    </button>
-
-    <mat-menu #accountMenu="matMenu">
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </button>
-    </mat-menu>
-
-  </mat-toolbar>
-
-  <!-- ================= LAYOUT ================= -->
-  <mat-sidenav-container class="layout">
+  <div class="app-layout">
 
     <!-- ================= SIDEBAR ================= -->
-    <mat-sidenav #sidenav mode="side" opened class="sidebar">
+    <div class="sidebar">
 
-      <mat-nav-list>
+      <!-- Logo -->
+      <div class="sidebar-logo">
+        <mat-icon class="logo-icon">receipt_long</mat-icon>
+        <span class="logo-text">QuoteApp</span>
+      </div>
+
+      <nav class="sidebar-nav">
 
         <!-- CUSTOMER MENU -->
         <div class="menu-group">
           <button
-            mat-list-item
             type="button"
+            class="nav-item"
             (click)="toggleUserMenu()"
-            class="parent-menu"
-            [class.active]="userMenuOpen"
-          >
-            <mat-icon class="menu-icon">person</mat-icon>
-            <span class="menu-text">Customer</span>
-            <mat-icon class="arrow-icon" [class.rotate]="userMenuOpen">
-              expand_more
-            </mat-icon>
+            [class.active]="userMenuOpen">
+            <mat-icon class="nav-icon">person</mat-icon>
+            <span class="nav-text">Customer</span>
+            <mat-icon class="nav-arrow" [class.rotate]="userMenuOpen">chevron_right</mat-icon>
           </button>
 
-          <div class="submenu-wrapper" [class.open]="userMenuOpen">
-            <a mat-list-item class="submenu-item" routerLink="/customers" routerLinkActive="active-submenu">
-              <span class="submenu-dot"></span>
-              <span>Customer List</span>
+          <div class="submenu" [class.open]="userMenuOpen">
+            <a class="submenu-item" routerLink="/customers" routerLinkActive="submenu-active">
+              Customer List
             </a>
-
-            <a mat-list-item class="submenu-item" routerLink="/customers/add" routerLinkActive="active-submenu">
-              <span class="submenu-dot"></span>
-              <span>Customer Add</span>
+            <a class="submenu-item" routerLink="/customers/add" routerLinkActive="submenu-active">
+              New Customer
             </a>
           </div>
         </div>
@@ -72,49 +39,70 @@
         <!-- QUOTE MENU -->
         <div class="menu-group">
           <button
-            mat-list-item
             type="button"
+            class="nav-item"
             (click)="toggleQuoteMenu()"
-            class="parent-menu"
-            [class.active]="quoteMenuOpen"
-          >
-            <mat-icon class="menu-icon">description</mat-icon>
-            <span class="menu-text">Quote</span>
-            <mat-icon class="arrow-icon" [class.rotate]="quoteMenuOpen">
-              expand_more
-            </mat-icon>
+            [class.active]="quoteMenuOpen">
+            <mat-icon class="nav-icon">description</mat-icon>
+            <span class="nav-text">Quote</span>
+            <mat-icon class="nav-arrow" [class.rotate]="quoteMenuOpen">chevron_right</mat-icon>
           </button>
 
-          <div class="submenu-wrapper" [class.open]="quoteMenuOpen">
-            <a mat-list-item class="submenu-item" routerLink="/quotes" routerLinkActive="active-submenu">
-              <span class="submenu-dot"></span>
-              <span>Quote List</span>
+          <div class="submenu" [class.open]="quoteMenuOpen">
+            <a class="submenu-item" routerLink="/quotes" routerLinkActive="submenu-active">
+              Quote List
             </a>
-
-            <a mat-list-item class="submenu-item" routerLink="/quotes/add" routerLinkActive="active-submenu">
-              <span class="submenu-dot"></span>
-              <span>Quote Add</span>
-            </a>
-
-            <a mat-list-item class="submenu-item" routerLink="/quotes/edit" routerLinkActive="active-submenu">
-              <span class="submenu-dot"></span>
-              <span>Quote Edit</span>
+            <a class="submenu-item" routerLink="/quotes/add" routerLinkActive="submenu-active">
+              New Quote
             </a>
           </div>
         </div>
 
-      </mat-nav-list>
+      </nav>
 
-    </mat-sidenav>
+      <!-- Logout at bottom -->
+      <div class="sidebar-footer">
+        <button type="button" class="logout-btn" (click)="logout()">
+          <mat-icon class="nav-icon">logout</mat-icon>
+          <span class="nav-text">Logout</span>
+        </button>
+      </div>
 
-    <!-- ================= CONTENT ================= -->
-    <mat-sidenav-content class="main-content">
-      <div class="content-wrapper">
+    </div>
+
+    <!-- ================= MAIN AREA ================= -->
+    <div class="main-area">
+
+      <!-- Top Bar -->
+      <div class="topbar">
+        <span class="topbar-title">QuoteApp</span>
+        <div class="topbar-actions">
+          <button mat-icon-button>
+            <mat-icon>search</mat-icon>
+          </button>
+          <button mat-icon-button>
+            <mat-icon>notifications</mat-icon>
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="accountMenu">
+            <mat-icon>account_circle</mat-icon>
+          </button>
+          <mat-menu #accountMenu="matMenu">
+            <button mat-menu-item (click)="logout()">
+              <mat-icon>logout</mat-icon>
+              <span>Logout</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="content-area">
         <router-outlet></router-outlet>
       </div>
-    </mat-sidenav-content>
 
-  </mat-sidenav-container>
+    </div>
+
+  </div>
 
 </ng-container>
 

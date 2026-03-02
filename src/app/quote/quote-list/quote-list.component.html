@@ -1,119 +1,159 @@
-<!-- ================= BREADCRUMB NAVIGATION ================= -->
-<div class="page-header">
-  <div class="breadcrumb">
-    <span class="breadcrumb-item">Admin</span>
-    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
-    <span class="breadcrumb-item">Quotes</span>
-    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
-    <span class="breadcrumb-item active">Quote List</span>
-  </div>
-</div>
+<div class="list-page">
 
-<!-- ================= MAIN CONTENT CARD ================= -->
-<mat-card class="content-card">
-  
-  <div class="card-header">
-    <h2 class="card-title">Quote List</h2>
-  </div>
+  <!-- ================= LIST PANEL ================= -->
+  <div class="list-panel" [class.shrink]="selectedQuote">
 
-  <mat-card-content>
-
-    <!-- Loading indicator -->
-    <div *ngIf="isLoading" class="loading-spinner">
-      <mat-spinner></mat-spinner>
-      <p>Loading quotes...</p>
-    </div>
-
-    <!-- Quote table -->
-    <div *ngIf="!isLoading && dataSource.data.length > 0" class="table-container">
-      <table mat-table [dataSource]="dataSource" class="modern-table">
-        
-        <!-- Quote ID Column -->
-        <ng-container matColumnDef="quoteId">
-          <th mat-header-cell *matHeaderCellDef>Quote ID</th>
-          <td mat-cell *matCellDef="let quote">{{quote.quoteId}}</td>
-        </ng-container>
-        
-        <!-- Quote Reference Column -->
-        <ng-container matColumnDef="quoteRef">
-          <th mat-header-cell *matHeaderCellDef>Quote Reference</th>
-          <td mat-cell *matCellDef="let quote">{{quote.quoteRef}}</td>
-        </ng-container>
-        
-        <!-- Customer ID Column -->
-        <ng-container matColumnDef="customerId">
-          <th mat-header-cell *matHeaderCellDef>Customer ID</th>
-          <td mat-cell *matCellDef="let quote">{{quote.customerId}}</td>
-        </ng-container>
-
-        <!-- Customer Name Column -->
-        <ng-container matColumnDef="customerName">
-          <th mat-header-cell *matHeaderCellDef>Customer Name</th>
-          <td mat-cell *matCellDef="let quote">{{quote.customerName}}</td>
-        </ng-container>
-        
-        <!-- Quote Date Column -->
-        <ng-container matColumnDef="quoteDate">
-          <th mat-header-cell *matHeaderCellDef>Quote Date</th>
-          <td mat-cell *matCellDef="let quote">{{quote.quoteDate | date:'dd/MM/yyyy'}}</td>
-        </ng-container>
-        
-        <!-- Total Quantity Column -->
-        <ng-container matColumnDef="totalQuantity">
-          <th mat-header-cell *matHeaderCellDef>Total Quantity</th>
-          <td mat-cell *matCellDef="let quote">{{quote.totalQuantity}}</td>
-        </ng-container>
-        
-        <!-- Total Value Column -->
-        <ng-container matColumnDef="totalValue">
-          <th mat-header-cell *matHeaderCellDef>Total Value</th>
-          <td mat-cell *matCellDef="let quote">{{quote.totalValue | currency:'INR':'symbol':'1.2-2'}}</td>
-        </ng-container>
-
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Actions</th>
-          <td mat-cell *matCellDef="let quote">
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="onEdit(quote)"
-              matTooltip="Edit Quote">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              color="warn"
-              (click)="onDelete(quote)"
-              matTooltip="Delete Quote">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-        
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
-      </table>
-    </div>
-
-    <!-- No data message -->
-    <div *ngIf="!isLoading && dataSource.data.length === 0" class="no-items-message">
-      <mat-icon>description</mat-icon>
-      <p>No quotes found in the database.</p>
-      <p>Click "NEW" button below to create your first quote.</p>
-    </div>
-
-    <!-- ================= ACTION BUTTON (MOVED TO BOTTOM RIGHT) ================= -->
-    <div class="action-bar-bottom" *ngIf="!isLoading">
-      <button
-        mat-raised-button
-        color="primary"
-        [routerLink]="['/quotes/add']"
-        class="action-button primary-button">
-        NEW
+    <div class="list-header">
+      <h2 class="list-title">
+        All Quotes
+        <mat-icon class="title-arrow">arrow_drop_down</mat-icon>
+      </h2>
+      <button mat-flat-button class="new-btn" [routerLink]="['/quotes/add']">
+        <mat-icon>add</mat-icon> New
       </button>
     </div>
 
-  </mat-card-content>
+    <div *ngIf="isLoading" class="loading-state">
+      <mat-spinner diameter="32"></mat-spinner>
+      <p>Loading quotes...</p>
+    </div>
 
-</mat-card>
+    <div class="table-wrap" *ngIf="!isLoading">
+      <table mat-table [dataSource]="dataSource" class="quotes-table">
+
+        <ng-container matColumnDef="quoteRef">
+          <th mat-header-cell *matHeaderCellDef>QUOTE REF</th>
+          <td mat-cell *matCellDef="let q">
+            <span class="ref-link" (click)="selectQuote(q)">{{ q.quoteRef }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="customerId">
+          <th mat-header-cell *matHeaderCellDef>CUSTOMER ID</th>
+          <td mat-cell *matCellDef="let q">{{ q.customerId }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quoteDate">
+          <th mat-header-cell *matHeaderCellDef>DATE</th>
+          <td mat-cell *matCellDef="let q">{{ q.quoteDate | date:'dd/MM/yyyy' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalQuantity">
+          <th mat-header-cell *matHeaderCellDef>QTY</th>
+          <td mat-cell *matCellDef="let q">{{ q.totalQuantity }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalValue">
+          <th mat-header-cell *matHeaderCellDef>TOTAL VALUE</th>
+          <td mat-cell *matCellDef="let q" class="value-cell">
+            {{ q.totalValue | currency:'INR':'symbol':'1.2-2' }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+          class="table-row"
+          [class.selected-row]="selectedQuote?.quoteId === row.quoteId"
+          (click)="selectQuote(row)">
+        </tr>
+
+      </table>
+
+      <div *ngIf="dataSource.data.length === 0" class="empty-state">
+        <mat-icon>description</mat-icon>
+        <p>No quotes found.</p>
+        <p>Click <strong>+ New</strong> to create your first quote.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= DETAIL PANEL ================= -->
+  <div class="detail-panel" *ngIf="selectedQuote">
+
+    <div class="detail-header">
+      <h3 class="detail-ref">{{ selectedQuote.quoteRef }}</h3>
+      <div class="detail-actions">
+        <button mat-flat-button class="new-btn" (click)="onEdit(selectedQuote)">Edit</button>
+        <button mat-icon-button color="warn" (click)="onDelete(selectedQuote)" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button (click)="closeDetail()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="detail-tabs">
+      <button class="detail-tab active">Overview</button>
+    </div>
+
+    <div class="detail-body">
+
+      <!-- Loading detail -->
+      <div *ngIf="isLoadingDetail" class="loading-state">
+        <mat-spinner diameter="24"></mat-spinner>
+        <p>Loading...</p>
+      </div>
+
+      <ng-container *ngIf="!isLoadingDetail">
+
+        <!-- Summary Card -->
+        <div class="summary-card">
+          <div class="summary-row">
+            <span class="summary-label">Quote Reference</span>
+            <span class="summary-value">{{ selectedQuote.quoteRef }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Customer ID</span>
+            <span class="summary-value highlight">{{ selectedQuote.customerId }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Quote Date</span>
+            <span class="summary-value">{{ selectedQuote.quoteDate | date:'dd MMM yyyy' }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Total Quantity</span>
+            <span class="summary-value">{{ selectedQuote.totalQuantity }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Total Value</span>
+            <span class="summary-value total-value">{{ selectedQuote.totalValue | currency:'INR':'symbol':'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- Line Items -->
+        <div class="detail-section" *ngIf="selectedQuote.quoteDetails && selectedQuote.quoteDetails.length > 0">
+          <div class="section-title">LINE ITEMS</div>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Description</th>
+                <th class="num-col">Rate</th>
+                <th class="num-col">Qty</th>
+                <th class="num-col">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of selectedQuote.quoteDetails; let i = index">
+                <td class="sl-col">{{ i + 1 }}</td>
+                <td>{{ item.itemDesc }}</td>
+                <td class="num-col">{{ item.itemUnitRate | currency:'INR':'symbol':'1.2-2' }}</td>
+                <td class="num-col">{{ item.itemQuantity }}</td>
+                <td class="num-col value-col">{{ item.itemValue | currency:'INR':'symbol':'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="no-items" *ngIf="!selectedQuote.quoteDetails || selectedQuote.quoteDetails.length === 0">
+          <mat-icon>inbox</mat-icon>
+          <p>No line items found.</p>
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+
+</div>

@@ -35,22 +35,16 @@ import { Customer } from '../models/customer.model';
 export class CustomerListComponent implements OnInit {
   displayedColumns: string[] = [
     'select',
-    'customerId',
     'name',
-    'address1',
-    'address2',
-    'city',
-    'stateProvince',
-    'country',
-    'contactNumber',
     'emailId',
-    'webUrl',
-    'actions'
+    'contactNumber',
+    'city'
   ];
 
   dataSource = new MatTableDataSource<Customer>([]);
   selection = new SelectionModel<Customer>(true, []);
   isDeleting = false;
+  selectedCustomer: Customer | null = null;
 
   @ViewChild(MatTable) table!: MatTable<Customer>;
 
@@ -68,26 +62,26 @@ export class CustomerListComponent implements OnInit {
     this.customerService.getCustomers().subscribe({
       next: (data: Customer[]) => {
         this.dataSource.data = data || [];
-        
-        if (this.table) {
-          this.table.renderRows();
-        }
-        
+        if (this.table) this.table.renderRows();
         this.cdr.detectChanges();
       },
       error: (err: any) => {
         console.error('Failed to load customers:', err);
-        this.snackBar.open('Failed to load customers', 'Close', {
-          duration: 3000
-        });
+        this.snackBar.open('Failed to load customers', 'Close', { duration: 3000 });
       }
     });
   }
 
+  selectCustomer(customer: Customer): void {
+    this.selectedCustomer = customer;
+  }
+
+  closeDetail(): void {
+    this.selectedCustomer = null;
+  }
+
   isAllSelected(): boolean {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
+    return this.selection.selected.length === this.dataSource.data.length;
   }
 
   toggleAllRows(): void {
@@ -100,36 +94,28 @@ export class CustomerListComponent implements OnInit {
 
   deleteSelected(): void {
     const selectedCustomers = this.selection.selected;
-    
+
     if (selectedCustomers.length === 0) {
       this.snackBar.open('No customers selected', 'Close', { duration: 2000 });
       return;
     }
 
-    const confirmDelete = confirm(
-      `Are you sure you want to delete ${selectedCustomers.length} customer(s)?`
-    );
-
-    if (!confirmDelete) {
-      return;
-    }
+    const confirmDelete = confirm(`Are you sure you want to delete ${selectedCustomers.length} customer(s)?`);
+    if (!confirmDelete) return;
 
     this.isDeleting = true;
 
-    const deleteRequests = selectedCustomers.map(customer => {
-      return this.customerService.deleteCustomer(customer.customerId!).pipe(
-        catchError(err => {
-          // Return structured error info
-          return of({ 
-            error: true, 
-            customerId: customer.customerId,
-            customerName: customer.name,
-            errorType: err.type || 'UNKNOWN',
-            message: err.message || 'Unknown error'
-          });
-        })
-      );
-    });
+    const deleteRequests = selectedCustomers.map(customer =>
+      this.customerService.deleteCustomer(customer.customerId!).pipe(
+        catchError(err => of({
+          error: true,
+          customerId: customer.customerId,
+          customerName: customer.name,
+          errorType: err.type || 'UNKNOWN',
+          message: err.message || 'Unknown error'
+        }))
+      )
+    );
 
     forkJoin(deleteRequests).pipe(
       finalize(() => {
@@ -139,51 +125,21 @@ export class CustomerListComponent implements OnInit {
     ).subscribe({
       next: (results) => {
         const errors = results.filter((r: any) => r?.error);
-        const foreignKeyErrors = errors.filter((r: any) => r.errorType === 'FOREIGN_KEY_CONSTRAINT');
-        const otherErrors = errors.filter((r: any) => r.errorType !== 'FOREIGN_KEY_CONSTRAINT');
         const successCount = results.length - errors.length;
 
-        // Show appropriate message based on errors
         if (errors.length === 0) {
-          // All succeeded
-          this.snackBar.open(
-            `Successfully deleted ${successCount} customer(s)`,
-            'Close',
-            { duration: 3000 }
-          );
-        } else if (foreignKeyErrors.length > 0 && otherErrors.length === 0) {
-          // Only foreign key errors
-          const customerNames = foreignKeyErrors.map((e: any) => e.customerName).join(', ');
-          this.snackBar.open(
-            `Cannot delete ${foreignKeyErrors.length} customer(s) (${customerNames}) - they have existing quotes. Delete their quotes first.`,
-            'Close',
-            { duration: 7000, panelClass: ['warning-snackbar'] }
-          );
-        } else if (foreignKeyErrors.length > 0) {
-          // Mixed errors
-          this.snackBar.open(
-            `Deleted ${successCount} customer(s). ${foreignKeyErrors.length} cannot be deleted (have quotes), ${otherErrors.length} failed with errors.`,
-            'Close',
-            { duration: 7000, panelClass: ['warning-snackbar'] }
-          );
+          this.snackBar.open(`Successfully deleted ${successCount} customer(s)`, 'Close', { duration: 3000 });
         } else {
-          // Other errors only
-          this.snackBar.open(
-            `Deleted ${successCount} customer(s), ${errors.length} failed. Check console for details.`,
-            'Close',
-            { duration: 5000 }
-          );
-          console.error('Failed deletions:', errors);
+          this.snackBar.open(`Deleted ${successCount}, ${errors.length} failed.`, 'Close', { duration: 5000 });
         }
 
         this.selection.clear();
+        this.selectedCustomer = null;
         setTimeout(() => this.loadCustomers(), 500);
       },
       error: (err: any) => {
-        console.error('Delete operation failed:', err);
-        this.snackBar.open('Delete operation failed', 'Close', {
-          duration: 3000
-        });
+        console.error('Delete failed:', err);
+        this.snackBar.open('Delete operation failed', 'Close', { duration: 3000 });
       }
     });
   }
