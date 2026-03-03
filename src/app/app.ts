@@ -29,7 +29,6 @@ import { AuthService } from './auth.service';
     MatListModule,
     MatMenuModule,
     MatDialogModule
-
   ]
 })
 export class App {
@@ -37,11 +36,13 @@ export class App {
   userMenuOpen = true;
   quoteMenuOpen = false;
   isLoginPage = false;
+  sidebarOpen = false;
 
-  constructor(private router: Router,
-              private dialog: MatDialog,
-              private auth: AuthService) {
-
+  constructor(
+    private router: Router,
+    private dialog: MatDialog,
+    private auth: AuthService
+  ) {
     this.updateRouteState(this.router.url);
 
     this.router.events
@@ -65,12 +66,20 @@ export class App {
     this.quoteMenuOpen = !this.quoteMenuOpen;
   }
 
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebar() {
+    this.sidebarOpen = false;
+  }
+
   logout() {
     const dialogRef = this.dialog.open(ConfirmLogoutDialog);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.auth.logout();   // ✅ REAL logout
+        this.auth.logout();
       }
     });
   }

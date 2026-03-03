@@ -2,57 +2,55 @@
 
   <!-- LEFT PANEL -->
   <div class="login-left">
-
     <div class="login-box">
 
-      <div class="tabs">
-        <span class="active">Login</span>
-        <span>New User</span>
+      <!-- Logo -->
+      <div class="logo">
+        <mat-icon class="logo-icon">receipt_long</mat-icon>
+        <span class="logo-text">QuoteApp</span>
       </div>
 
-      <h1>Welcome!</h1>
-
-      <button class="google-btn">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
-        Sign in with Google
-      </button>
-
-      <div class="divider">
-        <span></span>
-        <p>or</p>
-        <span></span>
-      </div>
+      <h1 class="login-title">Sign in</h1>
+      <p class="login-sub">to access QuoteApp</p>
 
       <form [formGroup]="form" (ngSubmit)="login()">
 
-        <label>Email Address *</label>
-        <input formControlName="email">
+        <div class="field-group">
+          <input
+            class="field-input"
+            type="text"
+            formControlName="email"
+            placeholder="Email address or username">
+        </div>
 
-        <label>Password *</label>
-        <input type="password" formControlName="password">
-
-        <div class="actions">
-          <button type="submit" class="login-btn">Login</button>
-          <a class="forgot">Forget password</a>
+        <div class="field-group">
+          <input
+            class="field-input"
+            type="password"
+            formControlName="password"
+            placeholder="Password">
         </div>
 
         <p class="error" *ngIf="error">{{ error }}</p>
 
+        <button type="submit" class="next-btn">Next</button>
+
       </form>
 
-      <p class="copyright">© 2014-2026 Your Company</p>
+      <p class="copyright">© 2014-2026 QuoteApp</p>
 
     </div>
-    
-
   </div>
 
   <!-- RIGHT PANEL -->
   <div class="login-right">
-    <div class="branding">
-      <h2>Angular Material Admin</h2>
+    <div class="right-content">
+      <div class="right-icon">
+        <mat-icon>description</mat-icon>
+      </div>
+      <h2>Manage your quotes</h2>
+      <p>Create, track and manage customer quotes all in one place.</p>
     </div>
   </div>
 
 </div>
-

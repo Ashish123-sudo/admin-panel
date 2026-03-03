@@ -3,8 +3,11 @@
 
   <div class="app-layout">
 
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" [class.active]="sidebarOpen" (click)="closeSidebar()"></div>
+
     <!-- ================= SIDEBAR ================= -->
-    <div class="sidebar">
+    <div class="sidebar" [class.open]="sidebarOpen">
 
       <!-- Logo -->
       <div class="sidebar-logo">
@@ -27,10 +30,10 @@
           </button>
 
           <div class="submenu" [class.open]="userMenuOpen">
-            <a class="submenu-item" routerLink="/customers" routerLinkActive="submenu-active">
+            <a class="submenu-item" routerLink="/customers" routerLinkActive="submenu-active" (click)="closeSidebar()">
               Customer List
             </a>
-            <a class="submenu-item" routerLink="/customers/add" routerLinkActive="submenu-active">
+            <a class="submenu-item" routerLink="/customers/add" routerLinkActive="submenu-active" (click)="closeSidebar()">
               New Customer
             </a>
           </div>
@@ -49,10 +52,10 @@
           </button>
 
           <div class="submenu" [class.open]="quoteMenuOpen">
-            <a class="submenu-item" routerLink="/quotes" routerLinkActive="submenu-active">
+            <a class="submenu-item" routerLink="/quotes" routerLinkActive="submenu-active" (click)="closeSidebar()">
               Quote List
             </a>
-            <a class="submenu-item" routerLink="/quotes/add" routerLinkActive="submenu-active">
+            <a class="submenu-item" routerLink="/quotes/add" routerLinkActive="submenu-active" (click)="closeSidebar()">
               New Quote
             </a>
           </div>
@@ -75,7 +78,12 @@
 
       <!-- Top Bar -->
       <div class="topbar">
-        <span class="topbar-title">QuoteApp</span>
+        <div class="topbar-left">
+          <button class="hamburger" (click)="toggleSidebar()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <span class="topbar-title">QuoteApp</span>
+        </div>
         <div class="topbar-actions">
           <button mat-icon-button>
             <mat-icon>search</mat-icon>
