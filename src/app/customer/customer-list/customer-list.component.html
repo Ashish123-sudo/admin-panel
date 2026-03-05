@@ -127,25 +127,28 @@
       <!-- Address Section -->
       <div class="detail-section">
         <div class="section-title">ADDRESS</div>
-        <div class="section-row">
+        <div class="section-row" *ngIf="selectedCustomer.address1">
           <span class="section-label">Address Line 1</span>
-          <span class="section-value">{{ selectedCustomer.address1 || '—' }}</span>
+          <span class="section-value">{{ selectedCustomer.address1 }}</span>
         </div>
-        <div class="section-row">
+        <div class="section-row" *ngIf="selectedCustomer.address2">
           <span class="section-label">Address Line 2</span>
-          <span class="section-value">{{ selectedCustomer.address2 || '—' }}</span>
+          <span class="section-value">{{ selectedCustomer.address2 }}</span>
         </div>
-        <div class="section-row">
+        <div class="section-row" *ngIf="selectedCustomer.city">
           <span class="section-label">City</span>
-          <span class="section-value">{{ selectedCustomer.city || '—' }}</span>
+          <span class="section-value">{{ selectedCustomer.city }}</span>
         </div>
-        <div class="section-row">
+        <div class="section-row" *ngIf="selectedCustomer.stateProvince">
           <span class="section-label">State</span>
-          <span class="section-value">{{ selectedCustomer.stateProvince || '—' }}</span>
+          <span class="section-value">{{ selectedCustomer.stateProvince }}</span>
         </div>
-        <div class="section-row">
+        <div class="section-row" *ngIf="selectedCustomer.country">
           <span class="section-label">Country</span>
-          <span class="section-value">{{ selectedCustomer.country || '—' }}</span>
+          <span class="section-value">{{ selectedCustomer.country }}</span>
+        </div>
+        <div class="section-empty" *ngIf="!selectedCustomer.address1 && !selectedCustomer.address2 && !selectedCustomer.city && !selectedCustomer.stateProvince && !selectedCustomer.country">
+          <span>No address on file</span>
         </div>
       </div>
 
