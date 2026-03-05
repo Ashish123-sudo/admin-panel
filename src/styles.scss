@@ -463,23 +463,24 @@ button { font-family: var(--font-base); }
 }
 
 // ================= SIDEBAR =================
+
 .sidebar {
   width: var(--sidebar-width);
   min-width: var(--sidebar-width);
-  background: var(--color-sidebar-bg);
+  background: #f0f2f9;          // light blue-grey like the reference
   color: var(--color-text-nav);
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  border-right: 1px solid var(--color-border-ui);
+  border-right: 1px solid #dde1ef;
   transition: transform 0.3s ease;
   z-index: var(--sidebar-z);
 
   &::-webkit-scrollbar       { width: 4px; }
   &::-webkit-scrollbar-track { background: transparent; }
-  &::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 2px; }
+  &::-webkit-scrollbar-thumb { background: #c8cce0; border-radius: 2px; }
 
   @media (max-width: 768px) {
     position: fixed;
@@ -492,47 +493,58 @@ button { font-family: var(--font-base); }
   }
 }
 
-.sidebar-nav { flex: 1; padding: 8px 0; }
+
+.sidebar-nav { flex: 1; padding: 10px 8px; }
 .menu-group  { margin-bottom: 2px; }
 
-// Parent nav item (e.g. "Customer", "Quote") — icon + label + chevron
+// Parent nav item (e.g. "Customer", "Quote")
 .nav-item {
   width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px var(--space-md);
+  padding: 9px 10px;
   background: transparent;
   border: none;
-  color: var(--color-text-nav);
+  color: #3d4466;
   cursor: pointer;
   font-size: 13px;
   font-family: inherit;
+  font-weight: 500;
   text-align: left;
   transition: background 0.15s;
-  border-radius: 0;
+  border-radius: 6px;
 
   &:hover {
-    background: var(--color-bg-hover);
+    background: #e4e7f3;
   }
 
-  // Active parent (when submenu is open)
   &.active {
-    color: var(--color-primary-dark);
-    .nav-icon  { color: var(--color-primary-dark); }
-    .nav-text  { color: var(--color-primary-dark); font-weight: 600; }
-    .nav-arrow { color: var(--color-primary-dark); }
+    background: #e4e7f3;
+    color: #1a1a2e;
+
+    .nav-icon  { color: #1a1a2e; }
+    .nav-text  { color: #1a1a2e; font-weight: 600; }
+    .nav-arrow { color: #1a1a2e; }
   }
 }
 
-.nav-icon  { font-size: 20px; width: 20px; height: 20px; color: var(--color-text-nav-icon); flex-shrink: 0; }
+
+.nav-icon  {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
 .nav-text  { flex: 1; font-size: 13px; font-weight: 500; color: inherit; }
 
 .nav-arrow {
   font-size: 18px;
   width: 18px;
   height: 18px;
-  color: var(--color-text-nav-sub);
+  color: #9aa0a6;
   transition: transform 0.25s ease;
 
   &.rotate { transform: rotate(90deg); }
@@ -543,39 +555,68 @@ button { font-family: var(--font-base); }
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
+  padding: 0 4px;
 
   &.open { max-height: 300px; }
 }
 
-// Submenu leaf items — indented, no icon, pill highlight when active
+// Submenu leaf items
 .submenu-item {
   display: flex;
   align-items: center;
-  padding: 7px 12px 7px 44px;
+  padding: 8px 12px 8px 36px;
   font-size: 13px;
   font-weight: 400;
-  color: var(--color-text-nav-icon);
+  color: #4b5583;
   text-decoration: none;
-  border-radius: 0;
+  border-radius: 6px;
   transition: background 0.15s, color 0.15s;
-  position: relative;
+  margin-bottom: 1px;
 
   &:hover {
-    background: var(--color-bg-hover);
-    color: var(--color-text-nav);
+    background: #e4e7f3;
+    color: #1a1a2e;
   }
 }
 
-// Active submenu item — solid blue pill (Zoho-style)
+// Active submenu item — blue rounded pill
 .submenu-active {
-  background: var(--color-primary) !important;
+  background: #3b82f6 !important;
   color: #fff !important;
   font-weight: 500;
-  border-radius: 0 !important;
+  border-radius: 6px !important;
 
   &:hover {
-    background: var(--color-primary-dark) !important;
+    background: #2563eb !important;
     color: #fff !important;
+  }
+}
+
+.sidebar-footer {
+  border-top: 1px solid #dde1ef;
+  padding: 6px 8px;
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  background: transparent;
+  border: none;
+  color: #4b5583;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #6b7280; }
+
+  &:hover {
+    background: #e4e7f3;
+    color: #1a1a2e;
   }
 }
 

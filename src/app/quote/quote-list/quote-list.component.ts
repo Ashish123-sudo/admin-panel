@@ -8,13 +8,11 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule, Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
 import { SearchService } from '../../shared/search.service';
 import { QuoteService } from '../services/quote.service';
 import { CustomerService } from '../../customer/services/customer.service';
 import { QuoteHeader } from '../models/quote.model';
 import { Customer } from '../../customer/models/customer.model';
-
 import { NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
@@ -67,12 +65,12 @@ export class QuoteListComponent implements OnInit {
   ngOnInit(): void {
     this.loadQuotes();
     this.router.events
-    .pipe(filter(e => e instanceof NavigationEnd))
-    .subscribe((e: NavigationEnd) => {
-      if (e.urlAfterRedirects === '/quotes') {
-        this.loadQuotes();
-      }
-    });
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe((e: NavigationEnd) => {
+        if (e.urlAfterRedirects === '/quotes') {
+          this.loadQuotes();
+        }
+      });
     this.searchService.searchTerm$.subscribe(term => {
       this.dataSource.filter = term;
     });
@@ -80,32 +78,47 @@ export class QuoteListComponent implements OnInit {
 
   loadQuotes(): void {
     this.isLoading = true;
-
-    forkJoin({
-      quotes: this.quoteService.getAllQuotes(),
-      customers: this.customerService.getCustomers()
-    }).subscribe({
-      next: ({ quotes, customers }) => {
-        // Build id → name lookup map
-        this.customerMap.clear();
-        customers.forEach((c: Customer) => {
-          if (c.customerId != null) this.customerMap.set(c.customerId, c.name);
-        });
-
-        // Enrich quotes with customerName
+    this.quoteService.getAllQuotes().subscribe({
+      next: (quotes) => {
         this.dataSource.data = (quotes || []).map(q => ({
           ...q,
-          customerName: this.customerMap.get(q.customerId!) ?? `ID: ${q.customerId}`
+          customerName: this.customerMap.size > 0
+            ? (this.customerMap.get(q.customerId!) ?? `ID: ${q.customerId}`)
+            : `ID: ${q.customerId}`
         }));
 
         if (this.table) this.table.renderRows();
-        this.isLoading = false;
-        this.cdr.detectChanges();
+
+        // setTimeout prevents NG0100 ExpressionChangedAfterItHasBeenCheckedError
+        setTimeout(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        });
+
+        if (this.customerMap.size === 0) {
+          this.customerService.getCustomers().subscribe({
+            next: (customers) => {
+              this.customerMap.clear();
+              customers.forEach((c: Customer) => {
+                if (c.customerId != null) this.customerMap.set(c.customerId, c.name);
+              });
+              this.dataSource.data = this.dataSource.data.map(q => ({
+                ...q,
+                customerName: this.customerMap.get(q.customerId!) ?? `ID: ${q.customerId}`
+              }));
+              this.cdr.detectChanges();
+            },
+            error: () => {}
+          });
+        }
       },
       error: (err) => {
-        console.error('Error loading data:', err);
+        setTimeout(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        });
+        console.error('Error loading quotes:', err);
         this.snackBar.open('Failed to load quotes', 'Close', { duration: 3000 });
-        this.isLoading = false;
       }
     });
   }
@@ -118,13 +131,12 @@ export class QuoteListComponent implements OnInit {
 
     this.quoteService.getQuoteById(quote.quoteId!).subscribe({
       next: (full: QuoteHeader) => {
-        // Re-attach customerName since backend doesn't return it
         this.selectedQuote = {
           ...full,
           customerName: this.customerMap.get(full.customerId!) ?? `ID: ${full.customerId}`
         };
         this.isLoadingDetail = false;
-        this.cdr.detectChanges();
+        setTimeout(() => this.cdr.detectChanges());
       },
       error: (err: any) => {
         console.error('Failed to load quote details:', err);

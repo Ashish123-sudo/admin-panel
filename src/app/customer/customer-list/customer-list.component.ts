@@ -14,7 +14,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import { SearchService } from '../../shared/search.service';
 import { CustomerService } from '../services/customer.service';
 import { Customer } from '../models/customer.model';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
@@ -27,7 +27,8 @@ import { Customer } from '../models/customer.model';
     MatCheckboxModule,
     MatSnackBarModule,
     MatTooltipModule,
-    RouterModule
+    RouterModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './customer-list.component.html',
   styleUrls: ['./customer-list.component.scss']
@@ -62,14 +63,19 @@ export class CustomerListComponent implements OnInit {
   });
   }
 
+  isLoading = true; // add this property
+
   loadCustomers(): void {
+    this.isLoading = true; // add this line
     this.customerService.getCustomers().subscribe({
       next: (data: Customer[]) => {
         this.dataSource.data = data || [];
+        this.isLoading = false; // add this line
         if (this.table) this.table.renderRows();
         this.cdr.detectChanges();
       },
       error: (err: any) => {
+        this.isLoading = false; // add this line
         console.error('Failed to load customers:', err);
         this.snackBar.open('Failed to load customers', 'Close', { duration: 3000 });
       }
