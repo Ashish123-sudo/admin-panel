@@ -194,37 +194,39 @@
         </div>
       </div>
 
-      <div class="profile-panel-overlay" *ngIf="showProfilePanel" (click)="closeProfilePanel()"></div>
-      <div class="profile-panel" [class.profile-panel--open]="showProfilePanel">
+    </div>
 
-        <div class="profile-panel-header">
-          <div class="profile-panel-avatar">{{ userInitials }}</div>
-          <div class="profile-panel-identity">
-            <span class="profile-panel-name">{{ userName }}</span>
-            <span class="profile-panel-email">{{ userEmail }}</span>
-          </div>
-          <button class="profile-panel-close" (click)="closeProfilePanel()">
-            <mat-icon>close</mat-icon>
-          </button>
+    <!-- PROFILE PANEL — at app-shell level so overlay covers toolbar too -->
+    <div class="profile-panel-overlay" *ngIf="showProfilePanel" (click)="closeProfilePanel()"></div>
+    <div class="profile-panel profile-panel--open" *ngIf="showProfilePanel">
+
+      <div class="profile-panel-header">
+        <div class="profile-panel-avatar">{{ userInitials }}</div>
+        <div class="profile-panel-identity">
+          <span class="profile-panel-name">{{ userName }}</span>
+          <span class="profile-panel-email">{{ userEmail }}</span>
         </div>
+        <button class="profile-panel-close" (click)="closeProfilePanel()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
 
-        <div class="profile-panel-meta">
-          <span class="profile-meta-label">User ID</span>
-          <span class="profile-meta-value">{{ userId }}</span>
-        </div>
+      <div class="profile-panel-meta">
+        <span class="profile-meta-label">User ID</span>
+        <span class="profile-meta-value">{{ userId }}</span>
+      </div>
 
-        <div class="profile-panel-divider"></div>
+      <div class="profile-panel-divider"></div>
 
-        <div class="profile-panel-actions">
-          <button class="profile-action-btn profile-action-btn--danger" (click)="logout()">
-            <mat-icon>logout</mat-icon>
-            <span>Sign Out</span>
-          </button>
-        </div>
-
+      <div class="profile-panel-actions">
+        <button class="profile-action-btn profile-action-btn--danger" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sign Out</span>
+        </button>
       </div>
 
     </div>
+
   </div>
 </ng-container>
 

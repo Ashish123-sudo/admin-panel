@@ -97,6 +97,7 @@ html, body {
   color: var(--color-text-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;  // prevent full-page horizontal scroll
 }
 
 // Preserve Material Icons font
@@ -117,7 +118,11 @@ button { font-family: var(--font-base); }
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100vw;
   overflow: hidden;
+  position: fixed;   // pins to viewport — prevents ANY scroll on the root
+  top: 0;
+  left: 0;
 }
 
 // ================= TOP TOOLBAR =================
@@ -619,6 +624,7 @@ button { font-family: var(--font-base); }
   flex-direction: column;
   overflow: hidden;
   min-width: 0;
+  max-width: 100%;
 
   @media (max-width: 768px) { width: 100%; }
 }
@@ -626,6 +632,7 @@ button { font-family: var(--font-base); }
 .content-area {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;   // table min-width scroll stays inside .table-wrap, not here
   background: var(--color-bg-app);
   padding: 0;
 }
@@ -898,27 +905,37 @@ button { font-family: var(--font-base); }
 
 // ================= PROFILE SLIDE-IN PANEL =================
 .profile-panel-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: var(--panel-z);
-  background: transparent;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 500;           // above toolbar (300), sidebar (200), everything
+  background: rgba(0,0,0,0.3);
+  cursor: pointer;
 }
 
 .profile-panel {
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   width: 300px;
-  height: 100%;
+  height: 100dvh;
   background: var(--color-bg-surface);
   box-shadow: var(--shadow-profile);
-  z-index: var(--panel-inner-z);
+  z-index: 501;
   display: flex;
   flex-direction: column;
-  transform: translateX(100%);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: panelSlideIn 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
-  &--open { transform: translateX(0); }
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+}
+
+@keyframes panelSlideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
 }
 
 .profile-panel-header {
@@ -1111,17 +1128,12 @@ button { font-family: var(--font-base); }
   .detail-back-btn  { display: flex; }
   .detail-close-btn { display: none !important; }
 
-  // Detail panel must sit below the toolbar, not cover it
-  .detail-panel {
-    top: var(--toolbar-height) !important;
-    inset: var(--toolbar-height) 0 0 0 !important;
-  }
-
   // Detail header: make room for back button
   .detail-header {
     gap: 8px;
 
-    .detail-name {
+    .detail-name,
+    .detail-ref {
       flex: 1;
       min-width: 0;
       overflow: hidden;
