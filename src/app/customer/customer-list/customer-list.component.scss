@@ -93,10 +93,23 @@
     min-width: 36px !important;
     width: 36px !important;
     padding: 0 !important;
-    border-radius: 4px !important;
 
-    mat-icon { margin-right: 0; }
-    span { display: none; }
+    // Hide the text node inside mdc-button__label, keep mat-icon
+    .mdc-button__label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      width: 36px;
+    }
+
+    // Hide any direct text nodes / spans that aren't the icon
+    .mdc-button__label > *:not(mat-icon) { display: none !important; }
+
+    mat-icon {
+      margin-right: 0;
+      flex-shrink: 0;
+    }
   }
 }
 
