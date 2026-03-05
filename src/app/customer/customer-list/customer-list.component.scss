@@ -5,6 +5,7 @@
   overflow: hidden;
   border-radius: 0;
 }
+
 .content-area {
   padding: 0 !important;
 }
@@ -23,14 +24,13 @@
     max-width: 55%;
   }
 
-  // On mobile, always full width
   @media (max-width: 768px) {
     flex: 1 !important;
     max-width: 100% !important;
     border-right: none;
 
     &.shrink {
-      display: none; // hide list when detail is open on mobile
+      display: none;
     }
   }
 }
@@ -42,6 +42,7 @@
   padding: 16px 20px;
   border-bottom: 1px solid #e8e8e8;
   flex-shrink: 0;
+  gap: 8px;
 
   @media (max-width: 768px) {
     padding: 12px 16px;
@@ -55,11 +56,17 @@
   margin: 0;
   display: flex;
   align-items: center;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   .title-arrow {
     font-size: 20px;
     color: #3b82f6;
     vertical-align: middle;
+    flex-shrink: 0;
   }
 
   @media (max-width: 768px) {
@@ -73,6 +80,7 @@
   border-radius: 4px !important;
   font-size: 13px !important;
   height: 36px !important;
+  flex-shrink: 0;
 
   mat-icon {
     font-size: 18px;
@@ -81,11 +89,11 @@
     margin-right: 4px;
   }
 
-  // Hide label on mobile, show just the + icon
   @media (max-width: 480px) {
     min-width: 36px !important;
     width: 36px !important;
     padding: 0 !important;
+    border-radius: 50% !important;
 
     mat-icon { margin-right: 0; }
     span { display: none; }
@@ -118,7 +126,6 @@
 
     &:first-child { padding-left: 20px; }
 
-    // Hide less important columns on mobile
     @media (max-width: 600px) {
       &.col-phone,
       &.col-city { display: none; }
@@ -144,7 +151,6 @@
 
     &:first-child { padding-left: 20px; }
 
-    // Hide less important columns on mobile
     @media (max-width: 600px) {
       &.col-phone,
       &.col-city { display: none; }
@@ -185,13 +191,15 @@
   overflow: hidden;
   background: #fff;
 
-  // On mobile, detail takes full screen
   @media (max-width: 768px) {
     flex: 1;
     max-width: 100%;
     width: 100%;
-    position: absolute;
-    inset: 0;
+    position: fixed;                        // fixed so it respects toolbar
+    top: 48px;                              // below the toolbar
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 10;
   }
 }
@@ -199,13 +207,13 @@
 .detail-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;                                 // gap instead of space-between so back btn flows naturally
   padding: 16px 20px;
   border-bottom: 1px solid #e8e8e8;
   flex-shrink: 0;
 
   @media (max-width: 768px) {
-    padding: 12px 16px;
+    padding: 10px 12px;
   }
 
   .detail-name {
@@ -213,9 +221,14 @@
     font-weight: 600;
     color: #1a1a1a;
     margin: 0;
+    flex: 1;                                // takes remaining space
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     @media (max-width: 768px) {
-      font-size: 16px;
+      font-size: 15px;
     }
   }
 
@@ -223,6 +236,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
   }
 }
 
@@ -233,7 +247,6 @@
   flex-shrink: 0;
   overflow-x: auto;
 
-  // Hide scrollbar on mobile tab strip
   &::-webkit-scrollbar { display: none; }
 
   @media (max-width: 768px) {
@@ -282,8 +295,8 @@
   margin-bottom: 20px;
 
   @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: row;                    // keep row on mobile, avatar is small enough
+    gap: 12px;
   }
 }
 
@@ -305,6 +318,7 @@
 
 .contact-info {
   flex: 1;
+  min-width: 0;
 }
 
 .contact-name {
@@ -334,6 +348,7 @@
   width: 15px;
   height: 15px;
   color: #9ca3af;
+  flex-shrink: 0;
 }
 
 // Address section
@@ -367,6 +382,7 @@
   .section-label {
     color: #6b7280;
     flex: 0 0 140px;
+    font-size: 12px;
   }
 
   .section-value {

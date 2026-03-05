@@ -81,13 +81,18 @@
 
     <!-- Detail Header -->
     <div class="detail-header">
+      <!-- Back arrow — visible only on mobile via CSS -->
+      <button class="detail-back-btn" (click)="closeDetail()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
       <h3 class="detail-name">{{ selectedCustomer.name }}</h3>
       <div class="detail-actions">
-        <button mat-flat-button color="primary" class="new-btn" 
+        <button mat-flat-button color="primary" class="new-btn"
          [routerLink]="['/customers/edit', selectedCustomer.customerId]">
           Edit
         </button>
-        <button mat-icon-button (click)="closeDetail()">
+        <!-- Close button — visible only on desktop via CSS -->
+        <button class="detail-close-btn" mat-icon-button (click)="closeDetail()">
           <mat-icon>close</mat-icon>
         </button>
       </div>

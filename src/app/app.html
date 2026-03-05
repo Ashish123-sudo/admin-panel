@@ -164,8 +164,8 @@
               <mat-icon class="nav-arrow" [class.rotate]="userMenuOpen">chevron_right</mat-icon>
             </button>
             <div class="submenu" [class.open]="userMenuOpen">
-              <a class="submenu-item" routerLink="/customers" routerLinkActive="submenu-active" (click)="isMobile && closeSidebar()">Customer List</a>
-              <a class="submenu-item" routerLink="/customers/add" routerLinkActive="submenu-active" (click)="isMobile && closeSidebar()">New Customer</a>
+              <a class="submenu-item" routerLink="/customers" routerLinkActive="submenu-active" [routerLinkActiveOptions]="{exact: true}" (click)="isMobile && closeSidebar()">Customer List</a>
+              <a class="submenu-item" routerLink="/customers/add" routerLinkActive="submenu-active" [routerLinkActiveOptions]="{exact: true}" (click)="isMobile && closeSidebar()">New Customer</a>
             </div>
           </div>
           <div class="menu-group">
@@ -175,8 +175,8 @@
               <mat-icon class="nav-arrow" [class.rotate]="quoteMenuOpen">chevron_right</mat-icon>
             </button>
             <div class="submenu" [class.open]="quoteMenuOpen">
-              <a class="submenu-item" routerLink="/quotes" routerLinkActive="submenu-active" (click)="isMobile && closeSidebar()">Quote List</a>
-              <a class="submenu-item" routerLink="/quotes/add" routerLinkActive="submenu-active" (click)="isMobile && closeSidebar()">New Quote</a>
+              <a class="submenu-item" routerLink="/quotes" routerLinkActive="submenu-active" [routerLinkActiveOptions]="{exact: true}" (click)="isMobile && closeSidebar()">Quote List</a>
+              <a class="submenu-item" routerLink="/quotes/add" routerLinkActive="submenu-active" [routerLinkActiveOptions]="{exact: true}" (click)="isMobile && closeSidebar()">New Quote</a>
             </div>
           </div>
         </nav>
