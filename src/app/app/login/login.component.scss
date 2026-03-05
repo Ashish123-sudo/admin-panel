@@ -3,7 +3,7 @@
 .login-page {
   display: flex;
   height: 100vh;
-  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
   background: #f3f4f6;
 }
 
@@ -18,12 +18,19 @@
 
   @media (max-width: 768px) {
     width: 100%;
+    padding: 24px 20px;
+    align-items: flex-start;
+    padding-top: 60px;
   }
 }
 
 .login-box {
   width: 100%;
   max-width: 420px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 }
 
 // Logo
@@ -32,6 +39,11 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 40px;
+    justify-content: center;
+  }
 
   .logo-icon {
     color: #3b82f6;
@@ -52,12 +64,22 @@
   font-weight: 500;
   color: #1a1a1a;
   margin: 0 0 4px;
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+    text-align: center;
+  }
 }
 
 .login-sub {
   font-size: 15px;
   color: #6b7280;
   margin: 0 0 28px;
+
+  @media (max-width: 768px) {
+    text-align: center;
+    margin-bottom: 32px;
+  }
 }
 
 // Fields
@@ -77,6 +99,12 @@
   background: #fff;
   transition: border-color 0.2s, box-shadow 0.2s;
 
+  // Prevent iOS zoom on focus (font-size must be >= 16px on mobile)
+  @media (max-width: 768px) {
+    font-size: 16px;
+    padding: 14px;
+  }
+
   &::placeholder { color: #9ca3af; }
 
   &:focus {
@@ -89,6 +117,10 @@
   color: #ef4444;
   font-size: 13px;
   margin: 0 0 12px;
+
+  @media (max-width: 768px) {
+    text-align: center;
+  }
 }
 
 // Next button
@@ -105,6 +137,13 @@
   font-family: inherit;
   margin-top: 8px;
   transition: background 0.2s;
+
+  @media (max-width: 768px) {
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 6px;
+    margin-top: 12px;
+  }
 
   &:hover { background: #2563eb; }
   &:active { background: #1d4ed8; }

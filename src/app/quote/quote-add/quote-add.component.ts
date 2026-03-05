@@ -17,7 +17,6 @@ import { CustomerService } from '../../customer/services/customer.service';
 import { QuoteHeader } from '../models/quote.model';
 import { Customer } from '../../customer/models/customer.model';
 
-// Material Modules
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -53,6 +52,14 @@ export class QuoteAddComponent implements OnInit {
   customers: Customer[] = [];
   isSubmitting = false;
 
+  // ✅ Supported currencies
+  currencies = ['INR', 'USD', 'EUR', 'GBP'];
+
+  // ✅ Currency symbols for display
+  currencySymbols: Record<string, string> = {
+    INR: '₹', USD: '$', EUR: '€', GBP: '£'
+  };
+
   displayedColumns: string[] = [
     'itemDesc',
     'itemUnitRate',
@@ -72,20 +79,17 @@ export class QuoteAddComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  // ================= INIT =================
-
   ngOnInit(): void {
     this.initializeForm();
     this.loadCustomers();
   }
 
-  // ================= FORM =================
-
   initializeForm(): void {
     this.quoteForm = this.fb.group({
-      quoteRef: [{ value: '', disabled: true }], // 👈 ADD THIS
+      quoteRef:   [{ value: '', disabled: true }],
       customerId: ['', Validators.required],
-      quoteDate: [new Date(), Validators.required],
+      quoteDate:  [new Date(), Validators.required],
+      currency:   ['INR', Validators.required],   // ✅ ADD
       quoteDetails: this.fb.array([])
     });
 
@@ -96,157 +100,106 @@ export class QuoteAddComponent implements OnInit {
     return this.quoteForm.get('quoteDetails') as FormArray;
   }
 
-  // ================= TABLE ROWS =================
+  // ✅ Helper to get selected currency code for pipe
+  get selectedCurrency(): string {
+    return this.quoteForm.get('currency')?.value || 'INR';
+  }
 
   addRow(): void {
     const row = this.fb.group({
-      itemDesc: ['', Validators.required],
+      itemDesc:     ['', Validators.required],
       itemUnitRate: [0, [Validators.required, Validators.min(0)]],
       itemQuantity: [1, [Validators.required, Validators.min(1)]],
-      itemValue: [0]
+      itemValue:    [0]
     });
-
     this.quoteDetails.push(row);
-
-    if (this.table) {
-      this.table.renderRows();
-    }
+    if (this.table) this.table.renderRows();
   }
 
   removeLineItem(index: number): void {
-    if (this.quoteDetails.length === 1) {
-      return;
-    }
-
+    if (this.quoteDetails.length === 1) return;
     this.quoteDetails.removeAt(index);
-
-    if (this.table) {
-      this.table.renderRows();
-    }
+    if (this.table) this.table.renderRows();
   }
 
   updateItemValue(index: number): void {
     const row = this.quoteDetails.at(index);
-
-    const qty = row.get('itemQuantity')?.value || 0;
+    const qty  = row.get('itemQuantity')?.value || 0;
     const rate = row.get('itemUnitRate')?.value || 0;
-
-    row.patchValue(
-      {
-        itemValue: qty * rate
-      },
-      { emitEvent: false }
-    );
+    row.patchValue({ itemValue: qty * rate }, { emitEvent: false });
   }
-
-  // ================= TOTALS =================
 
   getTotalQuantity(): number {
     return this.quoteDetails.controls.reduce(
-      (sum, row) => sum + (row.get('itemQuantity')?.value || 0),
-      0
+      (sum, row) => sum + (row.get('itemQuantity')?.value || 0), 0
     );
   }
 
   getTotalValue(): number {
     return this.quoteDetails.controls.reduce(
-      (sum, row) =>
-        sum +
-        (row.get('itemQuantity')?.value || 0) *
-          (row.get('itemUnitRate')?.value || 0),
-      0
+      (sum, row) => sum + (row.get('itemQuantity')?.value || 0) * (row.get('itemUnitRate')?.value || 0), 0
     );
   }
 
-  // ================= SAVE =================
-
   onSubmit(): void {
     if (this.quoteForm.invalid || this.quoteDetails.length === 0) {
-      this.snackBar.open('Please fill all required fields', 'Close', {
-        duration: 3000
-      });
+      this.snackBar.open('Please fill all required fields', 'Close', { duration: 3000 });
       return;
     }
 
     this.isSubmitting = true;
-
     const formValue = this.quoteForm.value;
-    const formattedDate = new Date(formValue.quoteDate)
-      .toISOString()
-      .split('T')[0];
+    const formattedDate = new Date(formValue.quoteDate).toISOString().split('T')[0];
 
     const quoteData: QuoteHeader = {
-      customerId: formValue.customerId,
-      quoteDate: formattedDate,
+      customerId:    formValue.customerId,
+      quoteDate:     formattedDate,
+      currency:      formValue.currency,           // ✅ ADD
       totalQuantity: this.getTotalQuantity(),
-      totalValue: this.getTotalValue(),
-      quoteDetails: formValue.quoteDetails.map((d: any) => ({
-        itemDesc: d.itemDesc,
+      totalValue:    this.getTotalValue(),
+      quoteDetails:  formValue.quoteDetails.map((d: any) => ({
+        itemDesc:     d.itemDesc,
         itemUnitRate: d.itemUnitRate,
         itemQuantity: d.itemQuantity,
-        itemValue: d.itemQuantity * d.itemUnitRate
+        itemValue:    d.itemQuantity * d.itemUnitRate
       }))
     };
 
     this.quoteService.createQuote(quoteData).subscribe({
       next: (savedQuote) => {
-        this.snackBar.open(
-          `Quote ${savedQuote.quoteRef} created successfully`,
-          'Close',
-          { duration: 3000 }
-        );
-
-        // 👇 THIS IS THE STEP YOU WERE MISSING
+        this.snackBar.open(`Quote ${savedQuote.quoteRef} created successfully`, 'Close', { duration: 3000 });
         this.quoteForm.get('quoteRef')?.setValue(savedQuote.quoteRef);
-
         this.isSubmitting = false;
         this.resetForm();
       },
       error: () => {
-        this.snackBar.open('Failed to save quote', 'Close', {
-          duration: 4000
-        });
+        this.snackBar.open('Failed to save quote', 'Close', { duration: 4000 });
         this.isSubmitting = false;
       }
     });
   }
 
   resetForm(): void {
-    // Tear down the form completely
     this.quoteForm = this.fb.group({
-      quoteRef: [{ value: '', disabled: true }],
+      quoteRef:   [{ value: '', disabled: true }],
       customerId: ['', Validators.required],
-      quoteDate: [new Date(), Validators.required],
+      quoteDate:  [new Date(), Validators.required],
+      currency:   ['INR', Validators.required],   // ✅ ADD
       quoteDetails: this.fb.array([])
     });
-
-    // Add one empty row
     this.addRow();
-
-    // Reset flags
     this.isSubmitting = false;
-
-    // Force Material table refresh
     this.cdr.detectChanges();
   }
-  // ================= DATA =================
 
   loadCustomers(): void {
     this.customerService.getCustomers().subscribe({
-      next: (data) => {
-        this.customers = data;
-        this.cdr.detectChanges();
-      },
-      error: () =>
-        this.snackBar.open('Failed to load customers', 'Close', {
-          duration: 3000
-        })
+      next: (data) => { this.customers = data; this.cdr.detectChanges(); },
+      error: () => this.snackBar.open('Failed to load customers', 'Close', { duration: 3000 })
     });
   }
 
-  onCancel(): void {
-    this.router.navigate(['/quotes']);
-  }
+  onCancel(): void { this.router.navigate(['/quotes']); }
 
   get lastRow(): FormGroup | null {
     if (this.quoteDetails.length === 0) return null;
@@ -254,12 +207,8 @@ export class QuoteAddComponent implements OnInit {
   }
 
   canAddRow(): boolean {
-  const last = this.lastRow;
-  if (!last) return true; // no rows yet, allow adding
-
-  return !!last.get('itemDesc')?.valid && !!last.get('itemUnitRate')?.valid;
-}
-
-
-
+    const last = this.lastRow;
+    if (!last) return true;
+    return !!last.get('itemDesc')?.valid && !!last.get('itemUnitRate')?.valid;
+  }
 }

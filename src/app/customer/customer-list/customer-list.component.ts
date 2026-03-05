@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-
+import { SearchService } from '../../shared/search.service';
 import { CustomerService } from '../services/customer.service';
 import { Customer } from '../models/customer.model';
 
@@ -51,11 +51,15 @@ export class CustomerListComponent implements OnInit {
   constructor(
     private customerService: CustomerService,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private searchService: SearchService 
   ) {}
 
   ngOnInit(): void {
     this.loadCustomers();
+    this.searchService.searchTerm$.subscribe(term => {
+    this.dataSource.filter = term;
+  });
   }
 
   loadCustomers(): void {

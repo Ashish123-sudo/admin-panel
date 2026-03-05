@@ -9,6 +9,10 @@
 .page-header {
   padding: 20px 24px 16px;
   border-bottom: 1px solid #e8e8e8;
+
+  @media (max-width: 768px) {
+    padding: 14px 16px 12px;
+  }
 }
 
 .page-title {
@@ -16,11 +20,19 @@
   font-weight: 400;
   color: #1a1a1a;
   margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 }
 
 .customer-form {
   padding: 8px 24px 32px;
   max-width: 760px;
+
+  @media (max-width: 768px) {
+    padding: 8px 16px 40px;
+  }
 }
 
 .form-row {
@@ -31,6 +43,13 @@
   border-bottom: 1px solid #f0f0f0;
   padding: 8px 0;
   gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    min-height: unset;
+    padding: 12px 0;
+  }
 }
 
 .form-label {
@@ -40,6 +59,14 @@
 
   .required {
     color: #e53e3e;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 }
 
@@ -59,9 +86,19 @@
   outline: none;
   transition: border-color 0.2s;
 
+  // Prevent iOS zoom
+  @media (max-width: 768px) {
+    font-size: 16px;
+    padding: 8px 0;
+  }
+
   &::placeholder {
     color: #aaa;
     font-size: 12px;
+
+    @media (max-width: 768px) {
+      font-size: 14px;
+    }
   }
 
   &:focus {
@@ -74,6 +111,12 @@
   display: flex;
   gap: 10px;
   padding-top: 20px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 24px;
+  }
 }
 
 .btn {
@@ -84,6 +127,13 @@
   cursor: pointer;
   border: none;
   transition: background 0.2s, opacity 0.2s;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    padding: 13px 20px;
+    font-size: 15px;
+    border-radius: 6px;
+  }
 
   &:disabled {
     opacity: 0.6;
@@ -104,11 +154,8 @@
   border: 1px solid #d4d4d4;
 
   &:not(:disabled):hover { background: #f5f5f5; }
-}
 
-@media (max-width: 600px) {
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 4px;
+  @media (max-width: 600px) {
+    order: 2; // cancel goes below save on mobile
   }
 }

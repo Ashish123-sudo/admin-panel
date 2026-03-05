@@ -31,15 +31,32 @@ export class LoginComponent {
   }
 
   login() {
+  const { email, password } = this.form.value;
 
-    if (this.form.invalid) return;
-
-    const { email, password } = this.form.value;
-
-    if (this.auth.login(email!, password!)) {
-      this.router.navigate(['/customers']);
-    } else {
-      this.error = 'Invalid credentials';
-    }
+  if (!email && !password) {
+    this.error = 'Please enter your email and password';
+    return;
   }
+
+  if (!email) {
+    this.error = 'Please enter your email address';
+    return;
+  }
+
+  if (!password) {
+    this.error = 'Please enter your password';
+    return;
+  }
+
+  if (this.form.invalid) {
+    this.error = 'Please enter a valid email address';
+    return;
+  }
+
+  if (this.auth.login(email, password)) {
+    this.router.navigate(['/customers']);
+  } else {
+    this.error = 'Invalid credentials';
+  }
+}
 }

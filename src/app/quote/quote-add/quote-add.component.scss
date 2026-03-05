@@ -9,6 +9,10 @@
 .page-header {
   padding: 20px 24px 16px;
   border-bottom: 1px solid #e8e8e8;
+
+  @media (max-width: 768px) {
+    padding: 14px 16px 12px;
+  }
 }
 
 .page-title {
@@ -16,11 +20,19 @@
   font-weight: 400;
   color: #1a1a1a;
   margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 }
 
 .quote-form {
   padding: 0 24px 32px;
   max-width: 100%;
+
+  @media (max-width: 768px) {
+    padding: 0 16px 40px;
+  }
 }
 
 .section-header {
@@ -40,7 +52,7 @@
   border-bottom: 1px solid #f0f0f0;
 
   @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
-  @media (max-width: 640px) { grid-template-columns: 1fr; }
+  @media (max-width: 640px)  { grid-template-columns: 1fr; gap: 16px; }
 }
 
 .form-group {
@@ -53,6 +65,7 @@
   font-size: 13px;
   color: #555;
   font-weight: 400;
+
   .required { color: #e53e3e; }
 }
 
@@ -71,7 +84,19 @@
   font-family: inherit;
   transition: border-color 0.2s;
 
-  &::placeholder { color: #aaa; font-size: 12px; }
+  // Prevent iOS zoom
+  @media (max-width: 768px) {
+    font-size: 16px;
+    padding: 8px 0;
+  }
+
+  &::placeholder {
+    color: #aaa;
+    font-size: 12px;
+
+    @media (max-width: 768px) { font-size: 14px; }
+  }
+
   &:focus { border-bottom-color: #3b82f6; box-shadow: none; }
   &[readonly] { background: transparent; color: #9ca3af; cursor: not-allowed; }
 }
@@ -111,15 +136,23 @@
 
 .field-error { font-size: 12px; color: #e53e3e; margin-top: 2px; }
 
+// ================= TABLE =================
 .table-container {
   overflow-x: auto;
   margin: 12px 0 0;
   border: 1px solid #e5e7eb;
   border-radius: 4px 4px 0 0;
+
+  // On mobile, allow horizontal scroll with a visible hint
+  @media (max-width: 768px) {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .items-table {
   width: 100%;
+  // Keep min-width so table doesn't crush on mobile — user scrolls horizontally
+  min-width: 480px;
 
   .mat-mdc-header-row { background: #f8f9fa; height: 40px; }
 
@@ -167,7 +200,6 @@
   p { margin: 0; font-size: 13px; }
 }
 
-// Single Add Item button - sits below the table
 .add-row-btn {
   display: flex;
   align-items: center;
@@ -189,8 +221,14 @@
 
   &:hover:not(:disabled) { background: #eff6ff; }
   &:disabled { color: #9ca3af; cursor: not-allowed; }
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    font-size: 14px;
+  }
 }
 
+// ================= TOTALS =================
 .totals-section {
   display: flex;
   flex-direction: column;
@@ -199,6 +237,11 @@
   border-top: 1px solid #e8e8e8;
   gap: 8px;
   margin-top: 12px;
+
+  // On mobile, stretch totals full width for easier reading
+  @media (max-width: 600px) {
+    align-items: stretch;
+  }
 }
 
 .total-row {
@@ -209,6 +252,14 @@
   .total-label { color: #6b7280; min-width: 120px; text-align: right; }
   .total-value { color: #1a1a1a; font-weight: 500; min-width: 100px; text-align: right; }
 
+  @media (max-width: 600px) {
+    justify-content: space-between;
+    gap: 0;
+
+    .total-label { text-align: left; min-width: unset; }
+    .total-value { min-width: unset; }
+  }
+
   &.grand {
     padding-top: 8px;
     border-top: 1px solid #e8e8e8;
@@ -218,12 +269,19 @@
   }
 }
 
+// ================= ACTIONS =================
 .form-actions {
   display: flex;
   gap: 10px;
   padding-top: 20px;
   border-top: 1px solid #e8e8e8;
   margin-top: 8px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 24px;
+  }
 }
 
 .btn {
@@ -235,6 +293,14 @@
   border: none;
   font-family: inherit;
   transition: background 0.2s, opacity 0.2s;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    padding: 13px 20px;
+    font-size: 15px;
+    border-radius: 6px;
+  }
+
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 
@@ -249,4 +315,8 @@
   color: #555;
   border: 1px solid #d4d4d4;
   &:not(:disabled):hover { background: #f5f5f5; }
+
+  @media (max-width: 600px) {
+    order: 2;
+  }
 }

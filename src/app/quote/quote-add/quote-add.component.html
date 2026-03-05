@@ -1,13 +1,11 @@
 <div class="page-container">
 
-  <!-- Page Header -->
   <div class="page-header">
     <h1 class="page-title">New Quote</h1>
   </div>
 
   <form [formGroup]="quoteForm" (ngSubmit)="onSubmit()" class="quote-form">
 
-    <!-- ================= QUOTE INFORMATION ================= -->
     <div class="section-header">Quote Information</div>
 
     <div class="form-row">
@@ -51,9 +49,18 @@
         </div>
       </div>
 
+      <!-- ✅ Currency Selection -->
+      <div class="form-group">
+        <label class="form-label">Currency <span class="required">*</span></label>
+        <div class="input-wrapper">
+          <select class="form-input form-select" formControlName="currency" required>
+            <option *ngFor="let c of currencies" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+      </div>
+
     </div>
 
-    <!-- ================= QUOTE ITEMS ================= -->
     <div class="section-header">Quote Items</div>
 
     <div class="table-container" *ngIf="quoteDetails.length > 0">
@@ -67,7 +74,7 @@
         </ng-container>
 
         <ng-container matColumnDef="itemUnitRate">
-          <th mat-header-cell *matHeaderCellDef>RATE</th>
+          <th mat-header-cell *matHeaderCellDef>RATE ({{ selectedCurrency }})</th>
           <td mat-cell *matCellDef="let item; let i = index">
             <input matInput type="number" [formControl]="item.get('itemUnitRate')" (input)="updateItemValue(i)" placeholder="0.00" />
           </td>
@@ -80,10 +87,11 @@
           </td>
         </ng-container>
 
+        <!-- ✅ Value uses selected currency -->
         <ng-container matColumnDef="itemValue">
           <th mat-header-cell *matHeaderCellDef>VALUE</th>
           <td mat-cell *matCellDef="let item">
-            {{ item.get('itemValue')?.value | currency:'INR':'symbol':'1.2-2' }}
+            {{ item.get('itemValue')?.value | currency:selectedCurrency:'symbol':'1.2-2' }}
           </td>
         </ng-container>
 
@@ -101,18 +109,16 @@
       </table>
     </div>
 
-    <!-- No items -->
     <div *ngIf="quoteDetails.length === 0" class="empty-items">
       <mat-icon>inbox</mat-icon>
       <p>No items added yet.</p>
     </div>
 
-    <!-- Single Add Item Button -->
     <button type="button" class="add-row-btn" (click)="addRow()" [disabled]="!canAddRow()">
       <mat-icon>add</mat-icon> Add Item
     </button>
 
-    <!-- Totals -->
+    <!-- ✅ Totals use selected currency -->
     <div class="totals-section" *ngIf="quoteDetails.length > 0">
       <div class="total-row">
         <span class="total-label">Total Quantity</span>
@@ -120,11 +126,10 @@
       </div>
       <div class="total-row grand">
         <span class="total-label">Total Value</span>
-        <span class="total-value">{{ getTotalValue() | currency:'INR':'symbol':'1.2-2' }}</span>
+        <span class="total-value">{{ getTotalValue() | currency:selectedCurrency:'symbol':'1.2-2' }}</span>
       </div>
     </div>
 
-    <!-- Actions -->
     <div class="form-actions">
       <button type="submit" class="btn btn-save" [disabled]="isSubmitting || quoteDetails.length === 0">
         {{ isSubmitting ? 'Saving...' : 'Save' }}

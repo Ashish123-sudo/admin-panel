@@ -31,30 +31,36 @@ export class AddComponent implements OnInit {
 
   initializeForm(): void {
     this.customerForm = this.fb.group({
-      name: ['', [Validators.required, Validators.maxLength(255)]],
-      address1: ['', Validators.maxLength(255)],
-      address2: ['', Validators.maxLength(255)],
-      city: ['', Validators.maxLength(255)],
-      stateProvince: ['', Validators.maxLength(255)],
-      country: ['', Validators.maxLength(255)],
+      firstName: ['', [Validators.required, Validators.maxLength(255)]],
+      lastName:  ['', Validators.maxLength(255)],
       contactNumber: ['', Validators.maxLength(255)],
-      emailId: ['', [Validators.email, Validators.maxLength(255)]],
-      webUrl: ['', Validators.maxLength(255)]
+      emailId:   ['', [Validators.email, Validators.maxLength(255)]],
+      address1:  ['', Validators.maxLength(255)],
+      address2:  ['', Validators.maxLength(255)],
+      city:      ['', Validators.maxLength(255)],
+      stateProvince: ['', Validators.maxLength(255)],
+      country:   ['', Validators.maxLength(255)],
+      webUrl:    ['', Validators.maxLength(255)]
     });
   }
 
   onSubmit(): void {
     if (this.customerForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
-      
-      const customerData: Customer = this.customerForm.value;
-      
+
+      const { firstName, lastName, ...rest } = this.customerForm.value;
+
+      // ✅ Combine first + last name into the `name` field
+      const customerData: Customer = {
+        ...rest,
+        name: [firstName, lastName].filter(Boolean).join(' ').trim()
+      };
+
       console.log('Submitting customer data:', customerData);
 
       this.customerService.createCustomer(customerData).subscribe({
         next: (response) => {
           console.log('Customer created successfully:', response);
-          // Navigate back to customer list
           this.router.navigate(['/customers']);
         },
         error: (error: any) => {
@@ -67,7 +73,6 @@ export class AddComponent implements OnInit {
         }
       });
     } else if (!this.customerForm.valid) {
-      // Mark all fields as touched to show validation errors
       Object.keys(this.customerForm.controls).forEach(key => {
         this.customerForm.get(key)?.markAsTouched();
       });
@@ -76,7 +81,6 @@ export class AddComponent implements OnInit {
   }
 
   onCancel(): void {
-    // Navigate back to customer list
     this.router.navigate(['/customers']);
   }
 }

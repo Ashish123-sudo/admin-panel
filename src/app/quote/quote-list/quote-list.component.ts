@@ -8,9 +8,15 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule, Router } from '@angular/router';
-
+import { forkJoin } from 'rxjs';
+import { SearchService } from '../../shared/search.service';
 import { QuoteService } from '../services/quote.service';
+import { CustomerService } from '../../customer/services/customer.service';
 import { QuoteHeader } from '../models/quote.model';
+import { Customer } from '../../customer/models/customer.model';
+
+import { NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-quote-list',
@@ -30,9 +36,11 @@ import { QuoteHeader } from '../models/quote.model';
   styleUrls: ['./quote-list.component.scss']
 })
 export class QuoteListComponent implements OnInit {
+
   displayedColumns: string[] = [
     'quoteRef',
     'customerId',
+    'customerName',
     'quoteDate',
     'totalQuantity',
     'totalValue'
@@ -43,30 +51,59 @@ export class QuoteListComponent implements OnInit {
   isLoadingDetail = false;
   selectedQuote: QuoteHeader | null = null;
 
+  private customerMap = new Map<number, string>();
+
   @ViewChild(MatTable) table!: MatTable<QuoteHeader>;
 
   constructor(
     private quoteService: QuoteService,
+    private customerService: CustomerService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private searchService: SearchService
   ) {}
 
   ngOnInit(): void {
     this.loadQuotes();
+    this.router.events
+    .pipe(filter(e => e instanceof NavigationEnd))
+    .subscribe((e: NavigationEnd) => {
+      if (e.urlAfterRedirects === '/quotes') {
+        this.loadQuotes();
+      }
+    });
+    this.searchService.searchTerm$.subscribe(term => {
+      this.dataSource.filter = term;
+    });
   }
 
   loadQuotes(): void {
     this.isLoading = true;
-    this.quoteService.getAllQuotes().subscribe({
-      next: (data: QuoteHeader[]) => {
-        this.dataSource.data = data || [];
+
+    forkJoin({
+      quotes: this.quoteService.getAllQuotes(),
+      customers: this.customerService.getCustomers()
+    }).subscribe({
+      next: ({ quotes, customers }) => {
+        // Build id → name lookup map
+        this.customerMap.clear();
+        customers.forEach((c: Customer) => {
+          if (c.customerId != null) this.customerMap.set(c.customerId, c.name);
+        });
+
+        // Enrich quotes with customerName
+        this.dataSource.data = (quotes || []).map(q => ({
+          ...q,
+          customerName: this.customerMap.get(q.customerId!) ?? `ID: ${q.customerId}`
+        }));
+
         if (this.table) this.table.renderRows();
         this.isLoading = false;
         this.cdr.detectChanges();
       },
-      error: (err: any) => {
-        console.error('Error loading quotes:', err);
+      error: (err) => {
+        console.error('Error loading data:', err);
         this.snackBar.open('Failed to load quotes', 'Close', { duration: 3000 });
         this.isLoading = false;
       }
@@ -74,15 +111,18 @@ export class QuoteListComponent implements OnInit {
   }
 
   selectQuote(quote: QuoteHeader): void {
-    // If already selected, do nothing
     if (this.selectedQuote?.quoteId === quote.quoteId) return;
 
     this.isLoadingDetail = true;
-    this.selectedQuote = quote; // show panel immediately with basic info
+    this.selectedQuote = quote;
 
     this.quoteService.getQuoteById(quote.quoteId!).subscribe({
       next: (full: QuoteHeader) => {
-        this.selectedQuote = full;
+        // Re-attach customerName since backend doesn't return it
+        this.selectedQuote = {
+          ...full,
+          customerName: this.customerMap.get(full.customerId!) ?? `ID: ${full.customerId}`
+        };
         this.isLoadingDetail = false;
         this.cdr.detectChanges();
       },

@@ -1,120 +1,233 @@
-<!-- ================= AUTH LAYOUT (LOGIN ONLY) ================= -->
 <ng-container *ngIf="!isLoginPage; else loginOnly">
+  <div class="app-shell">
 
-  <div class="app-layout">
-
-    <!-- Mobile overlay -->
-    <div class="sidebar-overlay" [class.active]="sidebarOpen" (click)="closeSidebar()"></div>
-
-    <!-- ================= SIDEBAR ================= -->
-    <div class="sidebar" [class.open]="sidebarOpen">
-
-      <!-- Logo -->
-      <div class="sidebar-logo">
-        <mat-icon class="logo-icon">receipt_long</mat-icon>
-        <span class="logo-text">QuoteApp</span>
-      </div>
-
-      <nav class="sidebar-nav">
-
-        <!-- CUSTOMER MENU -->
-        <div class="menu-group">
-          <button
-            type="button"
-            class="nav-item"
-            (click)="toggleUserMenu()"
-            [class.active]="userMenuOpen">
-            <mat-icon class="nav-icon">person</mat-icon>
-            <span class="nav-text">Customer</span>
-            <mat-icon class="nav-arrow" [class.rotate]="userMenuOpen">chevron_right</mat-icon>
-          </button>
-
-          <div class="submenu" [class.open]="userMenuOpen">
-            <a class="submenu-item" routerLink="/customers" routerLinkActive="submenu-active" (click)="closeSidebar()">
-              Customer List
-            </a>
-            <a class="submenu-item" routerLink="/customers/add" routerLinkActive="submenu-active" (click)="closeSidebar()">
-              New Customer
-            </a>
-          </div>
-        </div>
-
-        <!-- QUOTE MENU -->
-        <div class="menu-group">
-          <button
-            type="button"
-            class="nav-item"
-            (click)="toggleQuoteMenu()"
-            [class.active]="quoteMenuOpen">
-            <mat-icon class="nav-icon">description</mat-icon>
-            <span class="nav-text">Quote</span>
-            <mat-icon class="nav-arrow" [class.rotate]="quoteMenuOpen">chevron_right</mat-icon>
-          </button>
-
-          <div class="submenu" [class.open]="quoteMenuOpen">
-            <a class="submenu-item" routerLink="/quotes" routerLinkActive="submenu-active" (click)="closeSidebar()">
-              Quote List
-            </a>
-            <a class="submenu-item" routerLink="/quotes/add" routerLinkActive="submenu-active" (click)="closeSidebar()">
-              New Quote
-            </a>
-          </div>
-        </div>
-
-      </nav>
-
-      <!-- Logout at bottom -->
-      <div class="sidebar-footer">
-        <button type="button" class="logout-btn" (click)="logout()">
-          <mat-icon class="nav-icon">logout</mat-icon>
-          <span class="nav-text">Logout</span>
+    <!-- FULL WIDTH TOOLBAR -->
+    <div class="top-toolbar">
+      <div class="toolbar-left">
+        <button class="hamburger" (click)="toggleSidebar()">
+          <mat-icon>menu</mat-icon>
         </button>
+        <mat-icon class="toolbar-logo-icon">receipt_long</mat-icon>
+        <span class="toolbar-brand">QuoteApp</span>
       </div>
 
-    </div>
+      <div class="toolbar-center">
+        <div class="search-bar">
 
-    <!-- ================= MAIN AREA ================= -->
-    <div class="main-area">
+          <!-- ✅ Custom scope trigger (replaces matMenuTriggerFor) -->
+          <div class="search-scope"
+               [class.search-scope--open]="scopeDropdownOpen"
+               (click)="toggleScopeDropdown($event)">
+            <span class="scope-label">
+              {{ searchScope === 'all' ? 'All' : searchScope === 'customers' ? 'Customers' : 'Quotes' }}
+            </span>
+            <mat-icon class="scope-arrow">keyboard_arrow_down</mat-icon>
+          </div>
 
-      <!-- Top Bar -->
-      <div class="topbar">
-        <div class="topbar-left">
-          <button class="hamburger" (click)="toggleSidebar()">
-            <mat-icon>menu</mat-icon>
-          </button>
-          <span class="topbar-title">QuoteApp</span>
-        </div>
-        <div class="topbar-actions">
-          <button mat-icon-button>
-            <mat-icon>search</mat-icon>
-          </button>
-          <button mat-icon-button>
-            <mat-icon>notifications</mat-icon>
-          </button>
-          <button mat-icon-button [matMenuTriggerFor]="accountMenu">
-            <mat-icon>account_circle</mat-icon>
-          </button>
-          <mat-menu #accountMenu="matMenu">
-            <button mat-menu-item (click)="logout()">
-              <mat-icon>logout</mat-icon>
-              <span>Logout</span>
+          <!-- ✅ Custom scope dropdown panel -->
+          <div class="scope-dropdown" *ngIf="scopeDropdownOpen" (click)="$event.stopPropagation()">
+            <div class="scope-dropdown-header">Search in</div>
+
+            <button class="scope-option" [class.scope-option--active]="searchScope === 'all'"
+                    (click)="setSearchScope('all')">
+              <mat-icon class="scope-option-icon">travel_explore</mat-icon>
+              <span class="scope-option-label">All</span>
+              <mat-icon class="scope-option-check">check</mat-icon>
             </button>
-          </mat-menu>
+
+            <button class="scope-option" [class.scope-option--active]="searchScope === 'customers'"
+                    (click)="setSearchScope('customers')">
+              <mat-icon class="scope-option-icon">person</mat-icon>
+              <span class="scope-option-label">Customers</span>
+              <mat-icon class="scope-option-check">check</mat-icon>
+            </button>
+
+            <button class="scope-option" [class.scope-option--active]="searchScope === 'quotes'"
+                    (click)="setSearchScope('quotes')">
+              <mat-icon class="scope-option-icon">description</mat-icon>
+              <span class="scope-option-label">Quotes</span>
+              <mat-icon class="scope-option-check">check</mat-icon>
+            </button>
+          </div>
+
+          <div class="scope-divider"></div>
+
+          <mat-icon class="search-icon">search</mat-icon>
+          <input
+            class="search-input"
+            type="text"
+            [placeholder]="searchScope === 'all' ? 'Search customers or quotes...' : searchScope === 'customers' ? 'Search customers...' : 'Search quotes...'"
+            [(ngModel)]="searchTerm"
+            (input)="onSearch($event)"
+            (focus)="onSearchFocus()"
+            autocomplete="off">
+          <button class="search-clear" *ngIf="searchTerm" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+
+          <!-- Search results dropdown -->
+          <div class="search-dropdown" *ngIf="showDropdown && searchTerm.length > 0">
+            <div *ngIf="filteredCustomers.length > 0">
+              <div class="dropdown-section-title">CUSTOMERS</div>
+              <div class="dropdown-item" *ngFor="let c of filteredCustomers" (click)="goToCustomer(c)">
+                <mat-icon class="dropdown-icon">person</mat-icon>
+                <div class="dropdown-item-content">
+                  <span class="dropdown-name">{{ c.name }}</span>
+                  <span class="dropdown-sub">{{ c.emailId }}</span>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="filteredQuotes.length > 0">
+              <div class="dropdown-section-title">QUOTES</div>
+              <div class="dropdown-item" *ngFor="let q of filteredQuotes" (click)="goToQuote(q)">
+                <mat-icon class="dropdown-icon">description</mat-icon>
+                <div class="dropdown-item-content">
+                  <span class="dropdown-name">{{ q.quoteRef }}</span>
+                  <span class="dropdown-sub">Customer ID: {{ q.customerId }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-empty"
+                *ngIf="filteredCustomers.length === 0 && filteredQuotes.length === 0">
+              <mat-icon>search_off</mat-icon>
+              <span>No results for "{{ searchTerm }}"</span>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <!-- Content -->
-      <div class="content-area">
-        <router-outlet></router-outlet>
+      <div class="toolbar-right">
+
+        <!-- Recent button -->
+        <div class="recent-wrapper">
+          <button class="recent-btn" [class.recent-btn--active]="showRecentDropdown"
+                  (click)="toggleRecentDropdown($event)" title="Recent activities">
+            <mat-icon class="recent-icon">history</mat-icon>
+          </button>
+          <div class="recent-dropdown" *ngIf="showRecentDropdown" (click)="$event.stopPropagation()">
+            <div class="recent-dropdown-header">
+              <span class="recent-dropdown-title">Recently Visited</span>
+              <button class="recent-clear-btn" *ngIf="recentItems.length > 0" (click)="clearRecent($event)">Clear all</button>
+            </div>
+            <div class="recent-list" *ngIf="recentItems.length > 0">
+              <div class="recent-item" *ngFor="let item of recentItems" (click)="goToRecent(item)">
+                <div class="recent-item-icon"
+                     [class.recent-item-icon--quote]="item.type === 'quote'"
+                     [class.recent-item-icon--customer]="item.type === 'customer'">
+                  <mat-icon>{{ item.icon }}</mat-icon>
+                </div>
+                <div class="recent-item-content">
+                  <span class="recent-item-label">{{ item.label }}</span>
+                  <span class="recent-item-sub">{{ item.subLabel }}</span>
+                </div>
+                <span class="recent-item-time">{{ getRelativeTime(item.timestamp) }}</span>
+              </div>
+            </div>
+            <div class="recent-empty" *ngIf="recentItems.length === 0">
+              <mat-icon>history</mat-icon>
+              <span>No recent activity</span>
+              <p>Pages you visit will appear here</p>
+            </div>
+          </div>
+        </div>
+
+        <button mat-icon-button>
+          <mat-icon>notifications</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon>settings</mat-icon>
+        </button>
+
+        <button class="profile-btn" (click)="toggleProfilePanel($event)"
+                [class.profile-btn--active]="showProfilePanel" title="My profile">
+          <span class="profile-avatar">{{ userInitials || 'U' }}</span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="app-body" [class.sidebar-collapsed]="!sidebarOpen">
+
+      <div class="sidebar-overlay"
+           [class.active]="sidebarOpen && isMobile"
+           (click)="closeSidebar()">
+      </div>
+
+      <div class="sidebar" [class.open]="sidebarOpen">
+        <nav class="sidebar-nav">
+          <div class="menu-group">
+            <button type="button" class="nav-item" (click)="toggleUserMenu()" [class.active]="userMenuOpen">
+              <mat-icon class="nav-icon">person</mat-icon>
+              <span class="nav-text">Customer</span>
+              <mat-icon class="nav-arrow" [class.rotate]="userMenuOpen">chevron_right</mat-icon>
+            </button>
+            <div class="submenu" [class.open]="userMenuOpen">
+              <a class="submenu-item" routerLink="/customers" routerLinkActive="submenu-active" (click)="isMobile && closeSidebar()">Customer List</a>
+              <a class="submenu-item" routerLink="/customers/add" routerLinkActive="submenu-active" (click)="isMobile && closeSidebar()">New Customer</a>
+            </div>
+          </div>
+          <div class="menu-group">
+            <button type="button" class="nav-item" (click)="toggleQuoteMenu()" [class.active]="quoteMenuOpen">
+              <mat-icon class="nav-icon">description</mat-icon>
+              <span class="nav-text">Quote</span>
+              <mat-icon class="nav-arrow" [class.rotate]="quoteMenuOpen">chevron_right</mat-icon>
+            </button>
+            <div class="submenu" [class.open]="quoteMenuOpen">
+              <a class="submenu-item" routerLink="/quotes" routerLinkActive="submenu-active" (click)="isMobile && closeSidebar()">Quote List</a>
+              <a class="submenu-item" routerLink="/quotes/add" routerLinkActive="submenu-active" (click)="isMobile && closeSidebar()">New Quote</a>
+            </div>
+          </div>
+        </nav>
+        <div class="sidebar-footer">
+          <button type="button" class="logout-btn" (click)="logout()">
+            <mat-icon class="nav-icon">logout</mat-icon>
+            <span class="nav-text">Logout</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="main-area">
+        <div class="content-area">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+
+      <div class="profile-panel-overlay" *ngIf="showProfilePanel" (click)="closeProfilePanel()"></div>
+      <div class="profile-panel" [class.profile-panel--open]="showProfilePanel">
+
+        <div class="profile-panel-header">
+          <div class="profile-panel-avatar">{{ userInitials }}</div>
+          <div class="profile-panel-identity">
+            <span class="profile-panel-name">{{ userName }}</span>
+            <span class="profile-panel-email">{{ userEmail }}</span>
+          </div>
+          <button class="profile-panel-close" (click)="closeProfilePanel()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="profile-panel-meta">
+          <span class="profile-meta-label">User ID</span>
+          <span class="profile-meta-value">{{ userId }}</span>
+        </div>
+
+        <div class="profile-panel-divider"></div>
+
+        <div class="profile-panel-actions">
+          <button class="profile-action-btn profile-action-btn--danger" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Sign Out</span>
+          </button>
+        </div>
+
       </div>
 
     </div>
-
   </div>
-
 </ng-container>
 
-<!-- ================= LOGIN ONLY VIEW ================= -->
 <ng-template #loginOnly>
   <router-outlet></router-outlet>
 </ng-template>

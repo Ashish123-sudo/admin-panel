@@ -1,20 +1,20 @@
-// Quote Detail interface
 export interface QuoteDetail {
   slNo?: number;
-  quoteRef?: string;        // optional (backend fills if needed)
+  quoteRef?: string;
   itemDesc: string;
   itemUnitRate: number;
   itemQuantity: number;
   itemValue: number;
 }
 
-// Quote Header interface
 export interface QuoteHeader {
   quoteId?: number;
-  quoteRef?: string;        // ✅ MAKE OPTIONAL
+  quoteRef?: string;
   customerId?: number;
+  customerName?: string;
   quoteDate: string;
   totalQuantity?: number;
   totalValue?: number;
+  currency?: string;        // ✅ ADD
   quoteDetails?: QuoteDetail[];
 }
