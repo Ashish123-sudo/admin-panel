@@ -14,7 +14,6 @@
       <div class="toolbar-center">
         <div class="search-bar">
 
-          <!-- ✅ Custom scope trigger (replaces matMenuTriggerFor) -->
           <div class="search-scope"
                [class.search-scope--open]="scopeDropdownOpen"
                (click)="toggleScopeDropdown($event)">
@@ -24,24 +23,20 @@
             <mat-icon class="scope-arrow">keyboard_arrow_down</mat-icon>
           </div>
 
-          <!-- ✅ Custom scope dropdown panel -->
           <div class="scope-dropdown" *ngIf="scopeDropdownOpen" (click)="$event.stopPropagation()">
             <div class="scope-dropdown-header">Search in</div>
-
             <button class="scope-option" [class.scope-option--active]="searchScope === 'all'"
                     (click)="setSearchScope('all')">
               <mat-icon class="scope-option-icon">travel_explore</mat-icon>
               <span class="scope-option-label">All</span>
               <mat-icon class="scope-option-check">check</mat-icon>
             </button>
-
             <button class="scope-option" [class.scope-option--active]="searchScope === 'customers'"
                     (click)="setSearchScope('customers')">
               <mat-icon class="scope-option-icon">person</mat-icon>
               <span class="scope-option-label">Customers</span>
               <mat-icon class="scope-option-check">check</mat-icon>
             </button>
-
             <button class="scope-option" [class.scope-option--active]="searchScope === 'quotes'"
                     (click)="setSearchScope('quotes')">
               <mat-icon class="scope-option-icon">description</mat-icon>
@@ -157,29 +152,56 @@
 
       <div class="sidebar" [class.open]="sidebarOpen">
         <nav class="sidebar-nav">
+
+          <!-- Sales group (contains Customers + Quotes) -->
           <div class="menu-group">
             <button type="button" class="nav-item" (click)="toggleUserMenu()" [class.active]="userMenuOpen">
-              <mat-icon class="nav-icon">person</mat-icon>
-              <span class="nav-text">Customer</span>
+              <mat-icon class="nav-icon">shopping_cart</mat-icon>
+              <span class="nav-text">Sales</span>
               <mat-icon class="nav-arrow" [class.rotate]="userMenuOpen">chevron_right</mat-icon>
             </button>
+
             <div class="submenu" [class.open]="userMenuOpen">
-              <a class="submenu-item" routerLink="/customers" routerLinkActive="submenu-active" [routerLinkActiveOptions]="{exact: true}" (click)="isMobile && closeSidebar()">Customer List</a>
-              <a class="submenu-item" routerLink="/customers/add" routerLinkActive="submenu-active" [routerLinkActiveOptions]="{exact: true}" (click)="isMobile && closeSidebar()">New Customer</a>
+
+              <!-- Customers row -->
+              <div class="submenu-row" [class.submenu-row--active]="isCustomersActive">
+                <a class="submenu-item"
+                   routerLink="/customers"
+                   routerLinkActive="submenu-active"
+                   [routerLinkActiveOptions]="{exact: false}"
+                   (click)="isMobile && closeSidebar()">
+                  Customers
+                </a>
+                <a class="submenu-plus"
+                   routerLink="/customers/add"
+                   matTooltip="New Customer"
+                   (click)="isMobile && closeSidebar()">
+                  <mat-icon>add</mat-icon>
+                </a>
+              </div>
+
+              <!-- Quotes row -->
+              <div class="submenu-row" [class.submenu-row--active]="isQuotesActive">
+                <a class="submenu-item"
+                   routerLink="/quotes"
+                   routerLinkActive="submenu-active"
+                   [routerLinkActiveOptions]="{exact: false}"
+                   (click)="isMobile && closeSidebar()">
+                  Quotes
+                </a>
+                <a class="submenu-plus"
+                   routerLink="/quotes/add"
+                   matTooltip="New Quote"
+                   (click)="isMobile && closeSidebar()">
+                  <mat-icon>add</mat-icon>
+                </a>
+              </div>
+
             </div>
           </div>
-          <div class="menu-group">
-            <button type="button" class="nav-item" (click)="toggleQuoteMenu()" [class.active]="quoteMenuOpen">
-              <mat-icon class="nav-icon">description</mat-icon>
-              <span class="nav-text">Quote</span>
-              <mat-icon class="nav-arrow" [class.rotate]="quoteMenuOpen">chevron_right</mat-icon>
-            </button>
-            <div class="submenu" [class.open]="quoteMenuOpen">
-              <a class="submenu-item" routerLink="/quotes" routerLinkActive="submenu-active" [routerLinkActiveOptions]="{exact: true}" (click)="isMobile && closeSidebar()">Quote List</a>
-              <a class="submenu-item" routerLink="/quotes/add" routerLinkActive="submenu-active" [routerLinkActiveOptions]="{exact: true}" (click)="isMobile && closeSidebar()">New Quote</a>
-            </div>
-          </div>
+
         </nav>
+
         <div class="sidebar-footer">
           <button type="button" class="logout-btn" (click)="logout()">
             <mat-icon class="nav-icon">logout</mat-icon>
@@ -196,7 +218,7 @@
 
     </div>
 
-    <!-- PROFILE PANEL — at app-shell level so overlay covers toolbar too -->
+    <!-- PROFILE PANEL -->
     <div class="profile-panel-overlay" *ngIf="showProfilePanel" (click)="closeProfilePanel()"></div>
     <div class="profile-panel profile-panel--open" *ngIf="showProfilePanel">
 

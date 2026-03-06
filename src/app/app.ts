@@ -43,7 +43,8 @@ export class App {
   isLoginPage = false;
   sidebarOpen = true;
   isMobile = window.innerWidth <= 768;
-
+  isCustomersActive = false;
+  isQuotesActive = false;
   searchTerm = '';
   searchScope: 'all' | 'customers' | 'quotes' = 'all';
   showDropdown = false;
@@ -239,6 +240,10 @@ export class App {
   private updateRouteState(url: string) {
     this.userMenuOpen = url.startsWith('/customers');
     this.quoteMenuOpen = url.startsWith('/quotes');
+    this.isLoginPage = url.startsWith('/login');
+    this.isCustomersActive = url.startsWith('/customers');
+    this.isQuotesActive = url.startsWith('/quotes');
+    this.userMenuOpen = this.isCustomersActive || this.isQuotesActive;
     this.isLoginPage = url.startsWith('/login');
 
     if (!this.isLoginPage && this.allCustomers.length === 0) {

@@ -59,7 +59,7 @@
 
       </table>
 
-     <div *ngIf="isLoading" class="loading-state">
+      <div *ngIf="isLoading" class="loading-state">
         <mat-spinner diameter="24"></mat-spinner>
         <span>Loading quotes...</span>
       </div>
@@ -82,11 +82,17 @@
       </button>
       <h3 class="detail-ref">{{ selectedQuote.quoteRef }}</h3>
       <div class="detail-actions">
-        <button mat-flat-button class="new-btn" (click)="onEdit(selectedQuote)">Edit</button>
+        <button mat-icon-button (click)="onEdit(selectedQuote)" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <!-- ✅ Changed to openPreview instead of downloadPdf -->
+        <button mat-icon-button (click)="openPreview(selectedQuote)" matTooltip="Preview PDF">
+          <mat-icon>sim_card_download</mat-icon>
+        </button>
         <button mat-icon-button color="warn" (click)="onDelete(selectedQuote)" matTooltip="Delete">
           <mat-icon>delete</mat-icon>
         </button>
-        <button class="detail-close-btn" mat-icon-button (click)="closeDetail()">
+        <button class="detail-close-btn" mat-icon-button (click)="closeDetail()" matTooltip="Close">
           <mat-icon>close</mat-icon>
         </button>
       </div>
@@ -167,9 +173,38 @@
             <span class="summary-value total-value">{{ selectedQuote.totalValue | currency:(selectedQuote.currency || 'INR'):'symbol':'1.2-2' }}</span>
           </div>
         </div>
-
       </ng-container>
     </div>
   </div>
 
+</div>
+
+<!-- ================= PDF PREVIEW MODAL ================= -->
+<div class="pdf-overlay" *ngIf="showPreview" (click)="closePreview()">
+  <div class="pdf-modal" (click)="$event.stopPropagation()">
+
+    <div class="pdf-modal-header">
+      <span class="pdf-modal-title">
+        <mat-icon>picture_as_pdf</mat-icon>
+        Preview — {{ previewQuote?.quoteRef }}
+      </span>
+      <div class="pdf-modal-actions">
+        <button class="btn-download" (click)="downloadFromPreview()">
+          <mat-icon>download</mat-icon> Download
+        </button>
+        <button class="btn-close-modal" (click)="closePreview()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="pdf-modal-body">
+      <iframe
+        [src]="previewUrl"
+        class="pdf-iframe"
+        type="application/pdf">
+      </iframe>
+    </div>
+
+  </div>
 </div>

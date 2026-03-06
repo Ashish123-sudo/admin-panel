@@ -15,6 +15,13 @@ export interface QuoteHeader {
   quoteDate: string;
   totalQuantity?: number;
   totalValue?: number;
-  currency?: string;        // ✅ ADD
+  currency?: string;
+  termsConditions?: string;
+  customerAddress1?: string;
+  customerAddress2?: string;
+  customerCity?: string;
+  customerState?: string;
+  customerCountry?: string;
+  customerEmail?: string;
   quoteDetails?: QuoteDetail[];
 }

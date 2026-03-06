@@ -8,35 +8,27 @@
   <!-- Form -->
   <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="customer-form">
 
-    <!-- First Name -->
+    <!-- Company Name -->
     <div class="form-row">
-      <label class="form-label">First Name <span class="required">*</span></label>
+      <label class="form-label">Company Name <span class="required">*</span></label>
       <div class="input-wrapper">
-        <input type="text" class="form-input" formControlName="firstName" placeholder="First Name">
+        <input type="text" class="form-input" formControlName="name" placeholder="Company Name">
       </div>
     </div>
 
-    <!-- Last Name -->
+    <!-- Company Phone Number -->
     <div class="form-row">
-      <label class="form-label">Last Name</label>
+      <label class="form-label">Company Phone Number</label>
       <div class="input-wrapper">
-        <input type="text" class="form-input" formControlName="lastName" placeholder="Last Name">
+        <input type="tel" class="form-input" formControlName="contactNumber" placeholder="Company Phone Number">
       </div>
     </div>
 
-    <!-- Phone Number -->
+    <!-- Company Email -->
     <div class="form-row">
-      <label class="form-label">Phone Number</label>
+      <label class="form-label">Company Email</label>
       <div class="input-wrapper">
-        <input type="tel" class="form-input" formControlName="contactNumber" placeholder="Phone Number">
-      </div>
-    </div>
-
-    <!-- Email -->
-    <div class="form-row">
-      <label class="form-label">E-Mail</label>
-      <div class="input-wrapper">
-        <input type="email" class="form-input" formControlName="emailId" placeholder="E-Mail">
+        <input type="email" class="form-input" formControlName="emailId" placeholder="Company Email">
       </div>
     </div>
 
@@ -82,7 +74,7 @@
 
     <!-- Website URL -->
     <div class="form-row">
-      <label class="form-label">Website URL</label>
+      <label class="form-label">Company Website</label>
       <div class="input-wrapper">
         <input type="url" class="form-input" formControlName="webUrl" placeholder="Website URL">
       </div>

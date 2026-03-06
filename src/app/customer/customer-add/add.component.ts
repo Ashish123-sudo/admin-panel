@@ -31,16 +31,15 @@ export class AddComponent implements OnInit {
 
   initializeForm(): void {
     this.customerForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.maxLength(255)]],
-      lastName:  ['', Validators.maxLength(255)],
+      name:          ['', [Validators.required, Validators.maxLength(255)]],
       contactNumber: ['', Validators.maxLength(255)],
-      emailId:   ['', [Validators.email, Validators.maxLength(255)]],
-      address1:  ['', Validators.maxLength(255)],
-      address2:  ['', Validators.maxLength(255)],
-      city:      ['', Validators.maxLength(255)],
+      emailId:       ['', [Validators.email, Validators.maxLength(255)]],
+      address1:      ['', Validators.maxLength(255)],
+      address2:      ['', Validators.maxLength(255)],
+      city:          ['', Validators.maxLength(255)],
       stateProvince: ['', Validators.maxLength(255)],
-      country:   ['', Validators.maxLength(255)],
-      webUrl:    ['', Validators.maxLength(255)]
+      country:       ['', Validators.maxLength(255)],
+      webUrl:        ['', Validators.maxLength(255)]
     });
   }
 
@@ -48,19 +47,10 @@ export class AddComponent implements OnInit {
     if (this.customerForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
 
-      const { firstName, lastName, ...rest } = this.customerForm.value;
-
-      // ✅ Combine first + last name into the `name` field
-      const customerData: Customer = {
-        ...rest,
-        name: [firstName, lastName].filter(Boolean).join(' ').trim()
-      };
-
-      console.log('Submitting customer data:', customerData);
+      const customerData: Customer = this.customerForm.value;
 
       this.customerService.createCustomer(customerData).subscribe({
-        next: (response) => {
-          console.log('Customer created successfully:', response);
+        next: () => {
           this.router.navigate(['/customers']);
         },
         error: (error: any) => {
@@ -72,7 +62,7 @@ export class AddComponent implements OnInit {
           this.isSubmitting = false;
         }
       });
-    } else if (!this.customerForm.valid) {
+    } else {
       Object.keys(this.customerForm.controls).forEach(key => {
         this.customerForm.get(key)?.markAsTouched();
       });

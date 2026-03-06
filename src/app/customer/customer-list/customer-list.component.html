@@ -33,7 +33,7 @@
 
         <!-- Name -->
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>NAME</th>
+          <th mat-header-cell *matHeaderCellDef>COMPANY</th>
           <td mat-cell *matCellDef="let c">
             <span class="name-link" (click)="selectCustomer(c)">{{ c.name }}</span>
           </td>
@@ -47,7 +47,7 @@
 
         <!-- Phone -->
         <ng-container matColumnDef="contactNumber">
-          <th mat-header-cell *matHeaderCellDef>WORK PHONE</th>
+          <th mat-header-cell *matHeaderCellDef>PHONE</th>
           <td mat-cell *matCellDef="let c">{{ c.contactNumber }}</td>
         </ng-container>
 
@@ -114,7 +114,7 @@
     <div class="detail-body">
       <div class="contact-card">
         <div class="contact-avatar">
-          <mat-icon>person</mat-icon>
+          <mat-icon>business</mat-icon>
         </div>
         <div class="contact-info">
           <div class="contact-name">{{ selectedCustomer.name }}</div>
