@@ -64,6 +64,7 @@ export class QuoteAddComponent implements OnInit {
     'itemDesc',
     'itemUnitRate',
     'itemQuantity',
+    'itemDiscount',
     'itemValue',
     'actions'
   ];
@@ -110,6 +111,7 @@ export class QuoteAddComponent implements OnInit {
       itemDesc:     ['', Validators.required],
       itemUnitRate: [0, [Validators.required, Validators.min(0)]],
       itemQuantity: [1, [Validators.required, Validators.min(1)]],
+      itemDiscount: [0, [Validators.min(0), Validators.max(100)]],
       itemValue:    [0]
     });
     this.quoteDetails.push(row);
@@ -124,9 +126,11 @@ export class QuoteAddComponent implements OnInit {
 
   updateItemValue(index: number): void {
     const row = this.quoteDetails.at(index);
-    const qty  = row.get('itemQuantity')?.value || 0;
-    const rate = row.get('itemUnitRate')?.value || 0;
-    row.patchValue({ itemValue: qty * rate }, { emitEvent: false });
+    const qty      = row.get('itemQuantity')?.value || 0;
+    const rate     = row.get('itemUnitRate')?.value || 0;
+    const discount = row.get('itemDiscount')?.value || 0;
+    const value    = qty * rate * (1 - discount / 100);
+    row.patchValue({ itemValue: value }, { emitEvent: false });
   }
 
   getTotalQuantity(): number {
@@ -136,9 +140,12 @@ export class QuoteAddComponent implements OnInit {
   }
 
   getTotalValue(): number {
-    return this.quoteDetails.controls.reduce(
-      (sum, row) => sum + (row.get('itemQuantity')?.value || 0) * (row.get('itemUnitRate')?.value || 0), 0
-    );
+    return this.quoteDetails.controls.reduce((sum, row) => {
+      const qty      = row.get('itemQuantity')?.value || 0;
+      const rate     = row.get('itemUnitRate')?.value || 0;
+      const discount = row.get('itemDiscount')?.value || 0;
+      return sum + qty * rate * (1 - discount / 100);
+    }, 0);
   }
 
   onSubmit(): void {
@@ -157,11 +164,12 @@ export class QuoteAddComponent implements OnInit {
       currency:      formValue.currency,           // ✅ ADD
       totalQuantity: this.getTotalQuantity(),
       totalValue:    this.getTotalValue(),
-      quoteDetails:  formValue.quoteDetails.map((d: any) => ({
+      quoteDetails: formValue.quoteDetails.map((d: any) => ({
         itemDesc:     d.itemDesc,
         itemUnitRate: d.itemUnitRate,
         itemQuantity: d.itemQuantity,
-        itemValue:    d.itemQuantity * d.itemUnitRate
+        itemDiscount: d.itemDiscount,
+        itemValue:    d.itemQuantity * d.itemUnitRate * (1 - d.itemDiscount / 100)
       }))
     };
 

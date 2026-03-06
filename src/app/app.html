@@ -130,7 +130,12 @@
         <button mat-icon-button>
           <mat-icon>notifications</mat-icon>
         </button>
-        <button mat-icon-button>
+
+        <!-- ✅ Settings button — toggles settings mode -->
+        <button mat-icon-button
+                (click)="toggleSettings()"
+                [class.settings-btn--active]="settingsMode"
+                title="Settings">
           <mat-icon>settings</mat-icon>
         </button>
 
@@ -153,52 +158,80 @@
       <div class="sidebar" [class.open]="sidebarOpen">
         <nav class="sidebar-nav">
 
-          <!-- Sales group (contains Customers + Quotes) -->
-          <div class="menu-group">
-            <button type="button" class="nav-item" (click)="toggleUserMenu()" [class.active]="userMenuOpen">
-              <mat-icon class="nav-icon">shopping_cart</mat-icon>
-              <span class="nav-text">Sales</span>
-              <mat-icon class="nav-arrow" [class.rotate]="userMenuOpen">chevron_right</mat-icon>
-            </button>
+          <!-- ✅ SALES mode (default) -->
+          <ng-container *ngIf="!settingsMode">
+            <div class="menu-group">
+              <button type="button" class="nav-item" (click)="toggleUserMenu()" [class.active]="userMenuOpen">
+                <mat-icon class="nav-icon">shopping_cart</mat-icon>
+                <span class="nav-text">Sales</span>
+                <mat-icon class="nav-arrow" [class.rotate]="userMenuOpen">chevron_right</mat-icon>
+              </button>
 
-            <div class="submenu" [class.open]="userMenuOpen">
+              <div class="submenu" [class.open]="userMenuOpen">
 
-              <!-- Customers row -->
-              <div class="submenu-row" [class.submenu-row--active]="isCustomersActive">
-                <a class="submenu-item"
-                   routerLink="/customers"
-                   routerLinkActive="submenu-active"
-                   [routerLinkActiveOptions]="{exact: false}"
-                   (click)="isMobile && closeSidebar()">
-                  Customers
-                </a>
-                <a class="submenu-plus"
-                   routerLink="/customers/add"
-                   matTooltip="New Customer"
-                   (click)="isMobile && closeSidebar()">
-                  <mat-icon>add</mat-icon>
-                </a>
+                <div class="submenu-row" [class.submenu-row--active]="isCustomersActive">
+                  <a class="submenu-item"
+                     routerLink="/customers"
+                     routerLinkActive="submenu-active"
+                     [routerLinkActiveOptions]="{exact: false}"
+                     (click)="isMobile && closeSidebar()">
+                    Customers
+                  </a>
+                  <a class="submenu-plus"
+                     routerLink="/customers/add"
+                     matTooltip="New Customer"
+                     (click)="isMobile && closeSidebar()">
+                    <mat-icon>add</mat-icon>
+                  </a>
+                </div>
+
+                <div class="submenu-row" [class.submenu-row--active]="isQuotesActive">
+                  <a class="submenu-item"
+                     routerLink="/quotes"
+                     routerLinkActive="submenu-active"
+                     [routerLinkActiveOptions]="{exact: false}"
+                     (click)="isMobile && closeSidebar()">
+                    Quotes
+                  </a>
+                  <a class="submenu-plus"
+                     routerLink="/quotes/add"
+                     matTooltip="New Quote"
+                     (click)="isMobile && closeSidebar()">
+                    <mat-icon>add</mat-icon>
+                  </a>
+                </div>
+
               </div>
-
-              <!-- Quotes row -->
-              <div class="submenu-row" [class.submenu-row--active]="isQuotesActive">
-                <a class="submenu-item"
-                   routerLink="/quotes"
-                   routerLinkActive="submenu-active"
-                   [routerLinkActiveOptions]="{exact: false}"
-                   (click)="isMobile && closeSidebar()">
-                  Quotes
-                </a>
-                <a class="submenu-plus"
-                   routerLink="/quotes/add"
-                   matTooltip="New Quote"
-                   (click)="isMobile && closeSidebar()">
-                  <mat-icon>add</mat-icon>
-                </a>
-              </div>
-
             </div>
-          </div>
+          </ng-container>
+
+          <!-- ✅ SETTINGS mode -->
+          <ng-container *ngIf="settingsMode">
+            <div class="menu-group">
+              <button type="button" class="nav-item active">
+                <mat-icon class="nav-icon">settings</mat-icon>
+                <span class="nav-text">Settings</span>
+              </button>
+
+              <div class="submenu open">
+                <div class="submenu-row" [class.submenu-row--active]="isTermsActive">
+                  <a class="submenu-item"
+                    routerLink="/settings/terms"
+                    routerLinkActive="submenu-active"
+                    [routerLinkActiveOptions]="{exact: true}"
+                    (click)="isMobile && closeSidebar()">
+                    Terms &amp; Conditions
+                  </a>
+                  <a class="submenu-plus"
+                    routerLink="/settings/terms/add"
+                    matTooltip="New Template"
+                    (click)="isMobile && closeSidebar()">
+                    <mat-icon>add</mat-icon>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </ng-container>
 
         </nav>
 

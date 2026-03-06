@@ -32,7 +32,6 @@ import { RecentActivityService, RecentItem } from './shared/recent-activity.serv
     MatButtonModule,
     MatSidenavModule,
     MatListModule,
-    // MatMenuModule removed — no longer needed
     MatDialogModule
   ]
 })
@@ -48,9 +47,13 @@ export class App {
   searchTerm = '';
   searchScope: 'all' | 'customers' | 'quotes' = 'all';
   showDropdown = false;
-  scopeDropdownOpen = false;  // ← new
+  scopeDropdownOpen = false;
   filteredCustomers: Customer[] = [];
   filteredQuotes: QuoteHeader[] = [];
+
+  // Settings mode
+  settingsMode = false;
+  isTermsActive = false;
 
   // Recent activity
   showRecentDropdown = false;
@@ -94,7 +97,7 @@ export class App {
       const bar = document.querySelector('.search-bar');
       if (bar && !bar.contains(e.target as Node)) {
         this.showDropdown = false;
-        this.scopeDropdownOpen = false;  // ← close scope dropdown on outside click
+        this.scopeDropdownOpen = false;
       }
 
       const recentBtn = document.querySelector('.recent-wrapper');
@@ -126,6 +129,17 @@ export class App {
     this.userInitials = this.auth.getUserInitials();
   }
 
+  // ── Settings toggle ─────────────────────────────────────────────────────────
+
+  toggleSettings(): void {
+    this.settingsMode = !this.settingsMode;
+    if (this.settingsMode) {
+      this.router.navigate(['/settings/terms']);
+    } else {
+      this.router.navigate(['/quotes']);
+    }
+  }
+
   // ── Scope dropdown ──────────────────────────────────────────────────────────
 
   toggleScopeDropdown(event: MouseEvent): void {
@@ -140,7 +154,7 @@ export class App {
 
   setSearchScope(scope: 'all' | 'customers' | 'quotes'): void {
     this.searchScope = scope;
-    this.scopeDropdownOpen = false;  // ← close after selection
+    this.scopeDropdownOpen = false;
     if (this.searchTerm) this.runFilter(this.searchTerm.toLowerCase().trim());
   }
 
@@ -238,13 +252,12 @@ export class App {
   }
 
   private updateRouteState(url: string) {
-    this.userMenuOpen = url.startsWith('/customers');
-    this.quoteMenuOpen = url.startsWith('/quotes');
     this.isLoginPage = url.startsWith('/login');
     this.isCustomersActive = url.startsWith('/customers');
     this.isQuotesActive = url.startsWith('/quotes');
+    this.isTermsActive = url.startsWith('/settings/terms');
+    this.settingsMode = url.startsWith('/settings');
     this.userMenuOpen = this.isCustomersActive || this.isQuotesActive;
-    this.isLoginPage = url.startsWith('/login');
 
     if (!this.isLoginPage && this.allCustomers.length === 0) {
       this.loadSearchData();

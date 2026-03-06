@@ -64,6 +64,30 @@ export const routes: Routes = [
         .then(m => m.QuoteEditComponent)
   },
 
+  // ================= SETTINGS ROUTES =================
+  {
+    path: 'settings/terms',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./settings/tc-list/terms-settings.component')
+        .then(m => m.TermsSettingsComponent)
+  },
+
+  {
+    path: 'settings/terms/add',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./settings/tc-add/tc-add.component')
+        .then(m => m.TcAddComponent)
+  },
+
+  {
+  path: 'settings/terms/edit/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./settings/tc-edit/tc-edit.component')
+        .then(m => m.TcEditComponent)
+  },
   // ================= DEFAULT ROUTE =================
   {
     path: '',
