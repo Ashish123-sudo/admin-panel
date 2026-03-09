@@ -159,6 +159,13 @@
       </div>
 
       <div class="modal-body">
+        <div class="tc-template-selector" *ngIf="selectedTerms.length === 0">
+          <label class="form-label">Load from template</label>
+          <select class="form-input form-select" (change)="onTermsTemplateChange($event)">
+            <option value="">-- Select a template --</option>
+            <option *ngFor="let t of termsTemplates" [value]="t.id">{{ t.templateName }}</option>
+          </select>
+        </div>
         <div class="tc-group" *ngFor="let group of selectedTerms; let gi = index">
 
           <div class="tc-group-header">
