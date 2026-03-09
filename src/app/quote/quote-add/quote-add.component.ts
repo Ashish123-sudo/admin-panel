@@ -6,17 +6,18 @@ import {
   FormGroup,
   FormArray,
   Validators,
-  ReactiveFormsModule
+  ReactiveFormsModule,
+  FormsModule
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatTable } from '@angular/material/table';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-
+import { TermsService } from '../../settings/services/terms.service';
 import { QuoteService } from '../services/quote.service';
 import { CustomerService } from '../../customer/services/customer.service';
 import { QuoteHeader } from '../models/quote.model';
 import { Customer } from '../../customer/models/customer.model';
-
+import { TermsTemplate, TermsGroup } from '../../settings/models/terms.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,6 +34,7 @@ import { MatSelectModule } from '@angular/material/select';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -51,11 +53,12 @@ export class QuoteAddComponent implements OnInit {
   quoteForm!: FormGroup;
   customers: Customer[] = [];
   isSubmitting = false;
+  termsTemplates: TermsTemplate[] = [];
+  selectedTerms: (TermsGroup & { currentTerm?: string })[] = [];
+  showTcModal = false;
+  newGroupName = '';
 
-  // ✅ Supported currencies
   currencies = ['INR', 'USD', 'EUR', 'GBP'];
-
-  // ✅ Currency symbols for display
   currencySymbols: Record<string, string> = {
     INR: '₹', USD: '$', EUR: '€', GBP: '£'
   };
@@ -75,6 +78,7 @@ export class QuoteAddComponent implements OnInit {
     private fb: FormBuilder,
     private quoteService: QuoteService,
     private customerService: CustomerService,
+    private termsService: TermsService,
     private router: Router,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
@@ -83,17 +87,18 @@ export class QuoteAddComponent implements OnInit {
   ngOnInit(): void {
     this.initializeForm();
     this.loadCustomers();
+    this.loadTermsTemplates();
   }
 
   initializeForm(): void {
     this.quoteForm = this.fb.group({
-      quoteRef:   [{ value: '', disabled: true }],
-      customerId: ['', Validators.required],
-      quoteDate:  [new Date(), Validators.required],
-      currency:   ['INR', Validators.required],   // ✅ ADD
-      quoteDetails: this.fb.array([])
+      quoteRef:        [{ value: '', disabled: true }],
+      customerId:      ['', Validators.required],
+      quoteDate:       [new Date(), Validators.required],
+      currency:        ['INR', Validators.required],
+      termsTemplateId: ['', Validators.required],
+      quoteDetails:    this.fb.array([])
     });
-
     this.addRow();
   }
 
@@ -101,10 +106,13 @@ export class QuoteAddComponent implements OnInit {
     return this.quoteForm.get('quoteDetails') as FormArray;
   }
 
-  // ✅ Helper to get selected currency code for pipe
   get selectedCurrency(): string {
     return this.quoteForm.get('currency')?.value || 'INR';
   }
+
+  // =========================
+  // QUOTE ITEMS
+  // =========================
 
   addRow(): void {
     const row = this.fb.group({
@@ -148,9 +156,83 @@ export class QuoteAddComponent implements OnInit {
     }, 0);
   }
 
+  get lastRow(): FormGroup | null {
+    if (this.quoteDetails.length === 0) return null;
+    return this.quoteDetails.at(this.quoteDetails.length - 1) as FormGroup;
+  }
+
+  canAddRow(): boolean {
+    const last = this.lastRow;
+    if (!last) return true;
+    return !!last.get('itemDesc')?.valid && !!last.get('itemUnitRate')?.valid;
+  }
+
+  // =========================
+  // TERMS & CONDITIONS
+  // =========================
+
+  loadTermsTemplates(): void {
+    this.termsService.getAllTemplates().subscribe({
+      next: (data: TermsTemplate[]) => {
+        this.termsTemplates = data;
+        this.cdr.detectChanges();
+      },
+      error: (err: { message: string }) => {
+        console.error('Failed to load terms templates:', err);
+      }
+    });
+  }
+
+  onTermsTemplateChange(event: Event): void {
+    const id = Number((event.target as HTMLSelectElement).value);
+    const template = this.termsTemplates.find(t => t.templateId === id);
+    if (template) {
+      this.selectedTerms = template.termsGroups.map(g => ({
+        ...g,
+        termsDetails: g.termsDetails.map(d => ({ ...d })),
+        currentTerm: ''
+      }));
+      this.openTcModal();
+    } else {
+      this.selectedTerms = [];
+    }
+  }
+
+  openTcModal(): void { 
+  console.log('Opening modal, selectedTerms:', this.selectedTerms);
+  this.showTcModal = true; 
+}
+  closeTcModal(): void { this.showTcModal = false; }
+  confirmTc(): void { this.showTcModal = false; }
+
+  addGroup(): void {
+    this.selectedTerms.push({ groupName: 'New Term Type', termsDetails: [], currentTerm: '' });
+  }
+
+  removeGroup(gi: number): void {
+    this.selectedTerms.splice(gi, 1);
+  }
+
+  addTerm(gi: number): void {
+    this.selectedTerms[gi].termsDetails.push({ termText: '' });
+  }
+
+  removeTerm(gi: number, di: number): void {
+    this.selectedTerms[gi].termsDetails.splice(di, 1);
+  }
+
+  // =========================
+  // SUBMIT / RESET
+  // =========================
+
   onSubmit(): void {
     if (this.quoteForm.invalid || this.quoteDetails.length === 0) {
       this.snackBar.open('Please fill all required fields', 'Close', { duration: 3000 });
+      return;
+    }
+
+    if (this.selectedTerms.length === 0) {
+      this.snackBar.open('Please select and confirm terms & conditions', 'Close', { duration: 3000 });
       return;
     }
 
@@ -161,22 +243,28 @@ export class QuoteAddComponent implements OnInit {
     const quoteData: QuoteHeader = {
       customerId:    formValue.customerId,
       quoteDate:     formattedDate,
-      currency:      formValue.currency,           // ✅ ADD
+      currency:      formValue.currency,
       totalQuantity: this.getTotalQuantity(),
       totalValue:    this.getTotalValue(),
-      quoteDetails: formValue.quoteDetails.map((d: any) => ({
+      quoteDetails:  formValue.quoteDetails.map((d: any) => ({
         itemDesc:     d.itemDesc,
         itemUnitRate: d.itemUnitRate,
         itemQuantity: d.itemQuantity,
         itemDiscount: d.itemDiscount,
         itemValue:    d.itemQuantity * d.itemUnitRate * (1 - d.itemDiscount / 100)
-      }))
+      })),
+      incomingTerms: this.selectedTerms.flatMap((g, gi) =>
+        g.termsDetails.map((d, di) => ({
+          groupName:  g.groupName,
+          termText:   d.termText,
+          groupOrder: gi + 1,
+          termOrder:  di + 1
+        }))
+      )
     };
-
     this.quoteService.createQuote(quoteData).subscribe({
       next: (savedQuote) => {
         this.snackBar.open(`Quote ${savedQuote.quoteRef} created successfully`, 'Close', { duration: 3000 });
-        this.quoteForm.get('quoteRef')?.setValue(savedQuote.quoteRef);
         this.isSubmitting = false;
         this.resetForm();
       },
@@ -185,16 +273,19 @@ export class QuoteAddComponent implements OnInit {
         this.isSubmitting = false;
       }
     });
+    console.log('Quote payload:', JSON.stringify(quoteData));
   }
 
   resetForm(): void {
     this.quoteForm = this.fb.group({
-      quoteRef:   [{ value: '', disabled: true }],
-      customerId: ['', Validators.required],
-      quoteDate:  [new Date(), Validators.required],
-      currency:   ['INR', Validators.required],   // ✅ ADD
-      quoteDetails: this.fb.array([])
+      quoteRef:        [{ value: '', disabled: true }],
+      customerId:      ['', Validators.required],
+      quoteDate:       [new Date(), Validators.required],
+      currency:        ['INR', Validators.required],
+      termsTemplateId: ['', Validators.required],
+      quoteDetails:    this.fb.array([])
     });
+    this.selectedTerms = [];
     this.addRow();
     this.isSubmitting = false;
     this.cdr.detectChanges();
@@ -208,15 +299,4 @@ export class QuoteAddComponent implements OnInit {
   }
 
   onCancel(): void { this.router.navigate(['/quotes']); }
-
-  get lastRow(): FormGroup | null {
-    if (this.quoteDetails.length === 0) return null;
-    return this.quoteDetails.at(this.quoteDetails.length - 1) as FormGroup;
-  }
-
-  canAddRow(): boolean {
-    const last = this.lastRow;
-    if (!last) return true;
-    return !!last.get('itemDesc')?.valid && !!last.get('itemUnitRate')?.valid;
-  }
 }

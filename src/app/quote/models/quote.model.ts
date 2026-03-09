@@ -4,7 +4,15 @@ export interface QuoteDetail {
   itemDesc: string;
   itemUnitRate: number;
   itemQuantity: number;
+  itemDiscount?: number;
   itemValue: number;
+}
+
+export interface QuoteTermsCondition {
+  groupName: string;
+  termText: string;
+  groupOrder: number;
+  termOrder: number;
 }
 
 export interface QuoteHeader {
@@ -16,12 +24,14 @@ export interface QuoteHeader {
   totalQuantity?: number;
   totalValue?: number;
   currency?: string;
-  termsConditions?: string;
   customerAddress1?: string;
   customerAddress2?: string;
   customerCity?: string;
   customerState?: string;
   customerCountry?: string;
   customerEmail?: string;
+  termsConditions?: string;
   quoteDetails?: QuoteDetail[];
+  incomingTerms?: QuoteTermsCondition[];
+  quoteTermsConditions?: QuoteTermsCondition[];
 }

@@ -45,8 +45,24 @@
           </select>
         </div>
       </div>
+            <!-- Terms & Conditions -->
+      <div class="form-group">
+        <label class="form-label">Terms & Conditions</label>
+        <div class="input-wrapper tc-input-wrapper">
+          <span class="tc-status" *ngIf="selectedTerms.length > 0">
+            {{ selectedTerms.length }} group(s) loaded
+          </span>
+          <span class="tc-status empty" *ngIf="selectedTerms.length === 0">
+            No terms loaded
+          </span>
+          <button type="button" class="btn-view-tc" (click)="openTcModal()">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+        </div>
+      </div>
     </div>
-
+  
     <!-- ================= QUOTE ITEMS ================= -->
     <div class="section-header">Quote Items</div>
 
@@ -128,4 +144,52 @@
     </div>
 
   </div>
+
+  <div class="modal-overlay" *ngIf="showTcModal" (click)="closeTcModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h2 class="modal-title">Terms & Conditions</h2>
+      <button type="button" class="modal-close" (click)="closeTcModal()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="tc-group" *ngFor="let group of selectedTerms; let gi = index">
+
+        <div class="tc-group-header">
+          <input class="tc-group-name-input" [(ngModel)]="group.groupName"
+                 placeholder="Group name">
+          <button type="button" class="btn-icon btn-delete-group" (click)="removeGroup(gi)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="tc-term-row" *ngFor="let detail of group.termsDetails; let di = index">
+          <span class="tc-term-num">{{ di + 1 }}.</span>
+          <textarea class="tc-term-input" [(ngModel)]="detail.termText" rows="2"></textarea>
+          <button type="button" class="btn-icon btn-delete-term" (click)="removeTerm(gi, di)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <button type="button" class="btn-add-term" (click)="addTerm(gi)">
+          + Add Term
+        </button>
+
+      </div>
+
+      <button type="button" class="btn-add-group" (click)="addGroup()">
+        + Add Term Type
+      </button>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-save" (click)="confirmTc()">Confirm</button>
+      <button type="button" class="btn btn-cancel" (click)="closeTcModal()">Cancel</button>
+    </div>
+
+  </div>
+</div>
 </div>

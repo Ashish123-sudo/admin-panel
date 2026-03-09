@@ -49,13 +49,35 @@
         </div>
       </div>
 
-      <!-- ✅ Currency Selection -->
+      <!-- Currency Selection -->
       <div class="form-group">
         <label class="form-label">Currency <span class="required">*</span></label>
         <div class="input-wrapper">
           <select class="form-input form-select" formControlName="currency" required>
             <option *ngFor="let c of currencies" [value]="c">{{ c }}</option>
           </select>
+        </div>
+      </div>
+
+      <!-- Terms & Conditions Selection -->
+      <div class="form-group">
+        <label class="form-label">Terms & Conditions <span class="required">*</span></label>
+        <div class="input-wrapper tc-input-wrapper">
+          <select class="form-input form-select" formControlName="termsTemplateId"
+                  (change)="onTermsTemplateChange($event)">
+            <option value="">Select Terms & Conditions</option>
+            <option *ngFor="let t of termsTemplates" [value]="t.templateId">
+              {{ t.templateName }}
+            </option>
+          </select>
+          <button type="button" class="btn-view-tc" *ngIf="selectedTerms.length > 0"
+                  (click)="openTcModal()">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+        </div>
+        <div class="field-error" *ngIf="quoteForm.get('termsTemplateId')?.invalid && quoteForm.get('termsTemplateId')?.touched">
+          Please select terms & conditions
         </div>
       </div>
 
@@ -86,6 +108,7 @@
             <input matInput type="number" [formControl]="item.get('itemQuantity')" (input)="updateItemValue(i)" placeholder="1" />
           </td>
         </ng-container>
+
         <ng-container matColumnDef="itemDiscount">
           <th mat-header-cell *matHeaderCellDef>DISC %</th>
           <td mat-cell *matCellDef="let item; let i = index">
@@ -94,7 +117,6 @@
           </td>
         </ng-container>
 
-        <!-- ✅ Value uses selected currency -->
         <ng-container matColumnDef="itemValue">
           <th mat-header-cell *matHeaderCellDef>VALUE</th>
           <td mat-cell *matCellDef="let item">
@@ -125,7 +147,6 @@
       <mat-icon>add</mat-icon> Add Item
     </button>
 
-    <!-- ✅ Totals use selected currency -->
     <div class="totals-section" *ngIf="quoteDetails.length > 0">
       <div class="total-row">
         <span class="total-label">Total Quantity</span>
@@ -147,4 +168,54 @@
     </div>
 
   </form>
+</div>
+
+<!-- T&C Modal -->
+<div class="modal-overlay" *ngIf="showTcModal" (click)="closeTcModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h2 class="modal-title">Terms & Conditions</h2>
+      <button type="button" class="modal-close" (click)="closeTcModal()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="tc-group" *ngFor="let group of selectedTerms; let gi = index">
+
+        <div class="tc-group-header">
+          <input class="tc-group-name-input" [(ngModel)]="group.groupName"
+                 [ngModelOptions]="{standalone: true}" placeholder="Group name">
+          <button type="button" class="btn-icon btn-delete-group" (click)="removeGroup(gi)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="tc-term-row" *ngFor="let detail of group.termsDetails; let di = index">
+          <span class="tc-term-num">{{ di + 1 }}.</span>
+          <textarea class="tc-term-input" [(ngModel)]="detail.termText"
+                    [ngModelOptions]="{standalone: true}" rows="2"></textarea>
+          <button type="button" class="btn-icon btn-delete-term" (click)="removeTerm(gi, di)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <button type="button" class="btn-add-term" (click)="addTerm(gi)">
+          + Add Term
+        </button>
+
+      </div>
+
+      <button type="button" class="btn-add-group" (click)="addGroup()">
+        + Add Term Type
+      </button>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-save" (click)="confirmTc()">Confirm</button>
+      <button type="button" class="btn btn-cancel" (click)="closeTcModal()">Cancel</button>
+    </div>
+
+  </div>
 </div>

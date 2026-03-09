@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { QuoteHeader } from '../models/quote.model';
+import { environment } from '../../../Environments/environment';
 
 export interface TermsTemplate {
   id: number;
@@ -13,8 +14,8 @@ export interface TermsTemplate {
   providedIn: 'root'
 })
 export class QuoteService {
-  private apiUrl = 'https://quote-backend-production-c1be.up.railway.app/api/quotes';
-  private termsUrl = 'https://quote-backend-production-c1be.up.railway.app/api/terms-templates';
+  private apiUrl = `${environment.apiUrl}/api/quotes`;
+  private termsUrl = `${environment.apiUrl}/api/terms-templates`;
 
   constructor(private http: HttpClient) { }
 
@@ -33,7 +34,10 @@ export class QuoteService {
   getQuotesByCustomerId(customerId: number): Observable<QuoteHeader[]> {
     return this.http.get<QuoteHeader[]>(`${this.apiUrl}/customer/${customerId}`);
   }
-
+  updateQuoteTerms(quoteId: number, terms: any[]): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${quoteId}/terms`, terms);
+  }
+  
   createQuote(quote: QuoteHeader): Observable<QuoteHeader> {
     return this.http.post<QuoteHeader>(this.apiUrl, quote);
   }
@@ -58,7 +62,6 @@ export class QuoteService {
     return this.http.delete<void>(`${this.apiUrl}/detail/${slNo}`);
   }
 
-  // ================= TERMS TEMPLATES =================
   getTermsTemplates(): Observable<TermsTemplate[]> {
     return this.http.get<TermsTemplate[]>(this.termsUrl);
   }

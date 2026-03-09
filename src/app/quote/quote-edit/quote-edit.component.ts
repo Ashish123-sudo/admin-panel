@@ -8,7 +8,9 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { TermsService } from '../../settings/services/terms.service';
+import { TermsTemplate, TermsGroup } from '../../settings/models/terms.model';
+import { ReactiveFormsModule } from '@angular/forms';
 import { QuoteService } from '../services/quote.service';
 
 @Component({
@@ -28,7 +30,9 @@ import { QuoteService } from '../services/quote.service';
   styleUrls: ['./quote-edit.component.scss']
 })
 export class QuoteEditComponent implements OnInit {
-
+  selectedTerms: any[] = [];
+  showTcModal = false;
+  termsTemplates: any[] = [];
   isLoading = true;
   currentQuoteId: number | null = null;
   currentCurrency: string = 'INR';
@@ -49,6 +53,7 @@ export class QuoteEditComponent implements OnInit {
 
   constructor(
     private quoteService: QuoteService,
+    private termsService: TermsService,
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
@@ -75,6 +80,12 @@ export class QuoteEditComponent implements OnInit {
         this.customerId = response.customerId;
         this.quoteDate = response.quoteDate;
         this.dataSource.data = response.quoteDetails || [];
+
+        // Load terms
+        if (response.quoteTermsConditions && response.quoteTermsConditions.length > 0) {
+          this.selectedTerms = this.groupTerms(response.quoteTermsConditions);
+        }
+
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -100,6 +111,37 @@ export class QuoteEditComponent implements OnInit {
       next: () => this.snackBar.open('Currency updated', 'Close', { duration: 2000 }),
       error: () => this.snackBar.open('Failed to update currency', 'Close', { duration: 3000 })
     });
+  }
+
+  groupTerms(terms: any[]): any[] {
+    const grouped: Record<string, any> = {};
+    terms.forEach(t => {
+      if (!grouped[t.groupName]) {
+        grouped[t.groupName] = { groupName: t.groupName, termsDetails: [], currentTerm: '' };
+      }
+      grouped[t.groupName].termsDetails.push({ termText: t.termText });
+    });
+    return Object.values(grouped);
+  }
+
+  openTcModal(): void { this.showTcModal = true; }
+  closeTcModal(): void { this.showTcModal = false; }
+  confirmTc(): void { this.showTcModal = false; }
+
+  addGroup(): void {
+    this.selectedTerms.push({ groupName: 'New Term Type', termsDetails: [], currentTerm: '' });
+  }
+
+  removeGroup(gi: number): void {
+    this.selectedTerms.splice(gi, 1);
+  }
+
+  addTerm(gi: number): void {
+    this.selectedTerms[gi].termsDetails.push({ termText: '' });
+  }
+
+  removeTerm(gi: number, di: number): void {
+    this.selectedTerms[gi].termsDetails.splice(di, 1);
   }
 
   calculateItemValue(item: any): void {
@@ -165,8 +207,27 @@ export class QuoteEditComponent implements OnInit {
   }
 
   saveChanges(): void {
-    this.snackBar.open('All changes saved', 'Close', { duration: 2000 });
-    this.router.navigate(['/quotes']);
+    if (!this.currentQuoteId) return;
+
+    // Flatten selectedTerms groups into flat list for backend
+    const termsPayload = this.selectedTerms.flatMap((g, gi) =>
+      g.termsDetails.map((d: any, di: number) => ({
+        groupName:  g.groupName,
+        termText:   d.termText,
+        groupOrder: gi + 1,
+        termOrder:  di + 1
+      }))
+    );
+
+    this.quoteService.updateQuoteTerms(this.currentQuoteId, termsPayload).subscribe({
+      next: () => {
+        this.snackBar.open('All changes saved', 'Close', { duration: 2000 });
+        this.router.navigate(['/quotes']);
+      },
+      error: () => {
+        this.snackBar.open('Failed to save terms', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   cancelEdit(): void {

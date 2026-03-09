@@ -3,14 +3,13 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Customer } from '../models/customer.model';
-
+import { environment } from '../../../Environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CustomerService {
-  // Use the Railway backend URL
-  private apiUrl = 'https://quote-backend-production-c1be.up.railway.app/api/customers';
+  private apiUrl = `${environment.apiUrl}/api/customers`;
 
   constructor(private http: HttpClient) {}
 
@@ -49,11 +48,9 @@ export class CustomerService {
     let errorType = 'UNKNOWN';
 
     if (error.error instanceof ErrorEvent) {
-      // Client-side error
       errorMessage = `Client Error: ${error.error.message}`;
       errorType = 'CLIENT_ERROR';
     } else {
-      // Backend error
       if (error.error && typeof error.error === 'object') {
         errorMessage = error.error.message || errorMessage;
         errorType = error.error.error || errorType;

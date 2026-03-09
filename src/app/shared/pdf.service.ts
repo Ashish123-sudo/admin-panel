@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { QuoteHeader } from '../quote/models/quote.model';
+import { QuoteHeader, QuoteDetail } from '../quote/models/quote.model';
 import { AuthService } from '../../app/auth.service';
 
 @Injectable({ providedIn: 'root' })
@@ -128,7 +128,7 @@ export class PdfService {
     // ── Items Table ──────────────────────────────────────
     const tableStartY = Math.max(customerY + 6, 48);
 
-    const rows = (quote.quoteDetails || []).map((item, i) => [
+    const rows = (quote.quoteDetails || []).map((item: QuoteDetail, i: number) => [
       String(i + 1),
       item.itemDesc || '',
       this.formatNumber(Number(item.itemQuantity || 0)),
@@ -203,26 +203,44 @@ export class PdfService {
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(100, 100, 100);
-    // Text first so baseline aligns with line
     doc.text('Approved By :', margin, sigY);
-    // Line starts after the text, on the same 
     const sigTextWidth = doc.getTextWidth('Authorized Signature :');
     doc.setDrawColor(150, 150, 150);
     doc.setLineWidth(0.3);
     doc.line(margin + sigTextWidth + 3, sigY, margin + sigTextWidth + 50, sigY);
 
     // ── Terms & Conditions (below signature) ─────────────
-    if (quote.termsConditions?.trim()) {
-      const tcY = sigY + 16;
+    const terms = quote.quoteTermsConditions || quote.incomingTerms;
+    if (terms && terms.length > 0) {
+      let tcY = sigY + 16;
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(31, 41, 55);
       doc.text('Terms & Conditions', margin, tcY);
+      tcY += 6;
 
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(80, 80, 80);
-      const lines = doc.splitTextToSize(quote.termsConditions, pageW - margin * 2);
-      doc.text(lines, margin, tcY + 6);
+      const grouped = terms.reduce((acc: Record<string, string[]>, t) => {
+        if (!acc[t.groupName]) acc[t.groupName] = [];
+        acc[t.groupName].push(t.termText);
+        return acc;
+      }, {});
+
+      Object.entries(grouped).forEach(([groupName, termTexts]) => {
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(50, 50, 50);
+        doc.text(groupName, margin, tcY);
+        tcY += 5;
+
+        termTexts.forEach((text: string, i: number) => {
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(80, 80, 80);
+          const lines = doc.splitTextToSize(`${i + 1}. ${text}`, pageW - margin * 2 - 4);
+          doc.text(lines, margin + 2, tcY);
+          tcY += lines.length * 5;
+        });
+
+        tcY += 3;
+      });
     }
 
     return doc;
