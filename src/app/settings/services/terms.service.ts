@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { TermsTemplate } from '../models/terms.model';
-import { environment } from '../../../Environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ import { environment } from '../../../Environments/environment';
 export class TermsService {
   private apiUrl = `${environment.apiUrl}/api/terms`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAllTemplates(): Observable<TermsTemplate[]> {
     return this.http.get<TermsTemplate[]>(this.apiUrl).pipe(

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { QuoteHeader } from '../models/quote.model';
-import { environment } from '../../../Environments/environment';
+import { environment } from '../../../environments/environment';
 
 export interface TermsTemplate {
   id: number;
@@ -37,7 +37,7 @@ export class QuoteService {
   updateQuoteTerms(quoteId: number, terms: any[]): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${quoteId}/terms`, terms);
   }
-  
+
   createQuote(quote: QuoteHeader): Observable<QuoteHeader> {
     return this.http.post<QuoteHeader>(this.apiUrl, quote);
   }
