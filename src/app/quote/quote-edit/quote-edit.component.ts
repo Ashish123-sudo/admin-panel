@@ -68,6 +68,7 @@ export class QuoteEditComponent implements OnInit {
       return;
     }
     this.loadQuote(Number(id));
+    this.loadTermsTemplates();
   }
 
   loadQuote(id: number): void {
@@ -122,6 +123,26 @@ export class QuoteEditComponent implements OnInit {
       grouped[t.groupName].termsDetails.push({ termText: t.termText });
     });
     return Object.values(grouped);
+  }
+
+  loadTermsTemplates(): void {
+    this.termsService.getAllTemplates().subscribe({
+      next: (templates) => { this.termsTemplates = templates; },
+      error: () => {}
+    });
+  }
+
+  onTermsTemplateChange(event: Event): void {
+    const id = Number((event.target as HTMLSelectElement).value);
+    if (!id) return;
+    const template = this.termsTemplates.find((t: any) => t.id === id);
+    if (!template) return;
+    this.selectedTerms = (template.termsGroups || []).map((g: any) => ({
+      groupName: g.groupName,
+      termsDetails: (g.termsDetails || []).map((d: any) => ({ termText: d.termText })),
+      currentTerm: ''
+    }));
+    this.openTcModal();
   }
 
   openTcModal(): void { this.showTcModal = true; }
