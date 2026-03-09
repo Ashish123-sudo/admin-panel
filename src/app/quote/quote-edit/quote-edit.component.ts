@@ -135,14 +135,14 @@ export class QuoteEditComponent implements OnInit {
   onTermsTemplateChange(event: Event): void {
     const id = Number((event.target as HTMLSelectElement).value);
     if (!id) return;
-    const template = this.termsTemplates.find((t: any) => t.id === id);
+    const template = this.termsTemplates.find((t: any) => t.templateId === id);
     if (!template) return;
     this.selectedTerms = (template.termsGroups || []).map((g: any) => ({
       groupName: g.groupName,
       termsDetails: (g.termsDetails || []).map((d: any) => ({ termText: d.termText })),
       currentTerm: ''
     }));
-    this.openTcModal();
+    this.cdr.detectChanges();
   }
 
   openTcModal(): void { this.showTcModal = true; }
