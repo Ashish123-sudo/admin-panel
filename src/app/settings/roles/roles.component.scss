@@ -1,0 +1,106 @@
+.page-container { padding: 32px; max-width: 900px; }
+
+.page-header {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 24px;
+}
+
+.page-title { font-size: 22px; font-weight: 600; color: #111827; margin: 0; }
+
+.btn-add-role {
+  display: flex; align-items: center; gap: 6px;
+  background: #2563eb; color: #fff;
+  border: none; border-radius: 6px;
+  padding: 8px 16px; font-size: 14px; cursor: pointer;
+  &:hover { background: #1d4ed8; }
+  mat-icon { font-size: 18px; }
+}
+
+.add-form-bar {
+  display: flex; gap: 10px; align-items: center;
+  background: #f8fafc; border: 1px solid #e5e7eb;
+  border-radius: 8px; padding: 12px 16px; margin-bottom: 20px;
+}
+
+.role-input {
+  padding: 7px 10px; font-size: 13px;
+  border: 1px solid #d4d4d4; border-radius: 4px;
+  outline: none; min-width: 220px;
+  &:focus { border-color: #3b82f6; }
+}
+
+.btn-confirm {
+  background: #10b981; color: #fff; border: none;
+  border-radius: 4px; padding: 7px 16px;
+  font-size: 13px; cursor: pointer;
+  &:hover { background: #059669; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.btn-cancel-sm {
+  background: none; color: #6b7280;
+  border: 1px solid #d4d4d4; border-radius: 4px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+  &:hover { background: #f3f4f6; }
+}
+
+.loading { color: #6b7280; padding: 20px 0; }
+
+.roles-table {
+  border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;
+}
+
+.roles-table-header {
+  display: grid;
+  grid-template-columns: 220px 1fr 80px;
+  background: #f9fafb; padding: 10px 20px;
+  font-size: 11px; font-weight: 600;
+  color: #6b7280; letter-spacing: 0.05em;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.role-row {
+  display: grid;
+  grid-template-columns: 220px 1fr 80px;
+  align-items: center; padding: 12px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  &:last-child { border-bottom: none; }
+  &:hover { background: #f9fafb; }
+}
+
+.role-badge {
+  display: inline-block;
+  background: #eff6ff; color: #1d4ed8;
+  border-radius: 12px; padding: 3px 10px;
+  font-size: 12px; font-weight: 500;
+}
+
+.col-desc { font-size: 13px; color: #6b7280; }
+
+.col-actions {
+  display: flex; gap: 4px; justify-content: flex-end;
+}
+
+.btn-icon {
+  background: none; border: none; cursor: pointer;
+  color: #9ca3af; padding: 4px; border-radius: 4px;
+  display: flex; align-items: center;
+  &:hover { background: #f3f4f6; color: #374151; }
+  mat-icon { font-size: 18px; }
+}
+
+.btn-delete:hover { color: #ef4444; background: #fef2f2; }
+.btn-save-icon:hover { color: #10b981; background: #f0fdf4; }
+
+.role-input-inline {
+  width: 100%; padding: 5px 8px; font-size: 13px;
+  border: 1px solid #d4d4d4; border-radius: 4px; outline: none;
+  &:focus { border-color: #3b82f6; }
+}
+
+.roles-empty {
+  display: flex; flex-direction: column;
+  align-items: center; padding: 40px; color: #9ca3af;
+  mat-icon { font-size: 40px; margin-bottom: 8px; }
+  p { font-size: 14px; }
+}

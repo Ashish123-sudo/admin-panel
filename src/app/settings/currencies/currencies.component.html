@@ -1,0 +1,83 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">Currencies</h1>
+    <button class="btn-add" (click)="showAddForm = !showAddForm">
+      <mat-icon>add</mat-icon> Add Currency
+    </button>
+  </div>
+
+  <div class="add-form-bar" *ngIf="showAddForm">
+    <input class="currency-input" [(ngModel)]="newCode"
+           placeholder="Code (e.g. USD)" (keyup.enter)="addCurrency()"
+           style="width: 100px; text-transform: uppercase">
+    <input class="currency-input" [(ngModel)]="newName"
+           placeholder="Name (e.g. US Dollar)" (keyup.enter)="addCurrency()">
+    <button class="btn-confirm" (click)="addCurrency()" [disabled]="!newCode.trim()">Add</button>
+    <button class="btn-cancel-sm" (click)="showAddForm = false; newCode = ''; newName = ''">Cancel</button>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">Loading...</div>
+
+  <div class="currency-table" *ngIf="!isLoading">
+
+    <div class="currency-table-header">
+      <span class="col-code">CODE</span>
+      <span class="col-name">NAME</span>
+      <span class="col-default">DEFAULT</span>
+      <span class="col-actions"></span>
+    </div>
+
+    <div class="currency-empty" *ngIf="currencies.length === 0">
+      <mat-icon>monetization_on</mat-icon>
+      <p>No currencies added yet.</p>
+    </div>
+
+    <div class="currency-row" *ngFor="let c of currencies">
+
+      <!-- View mode -->
+      <ng-container *ngIf="editingId !== c.currencyId">
+        <span class="col-code">
+          <span class="code-badge">{{ c.currencyCode }}</span>
+        </span>
+        <span class="col-name">{{ c.currencyName || '—' }}</span>
+        <span class="col-default">
+          <span class="default-badge" *ngIf="c.isDefault">Default</span>
+          <button class="btn-set-default" *ngIf="!c.isDefault" (click)="setDefault(c)">
+            Set Default
+          </button>
+        </span>
+        <span class="col-actions">
+          <button class="btn-icon" (click)="startEdit(c)" title="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button class="btn-icon btn-delete" (click)="deleteCurrency(c)" title="Delete"
+                  [disabled]="c.isDefault!">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </span>
+      </ng-container>
+
+      <!-- Edit mode -->
+      <ng-container *ngIf="editingId === c.currencyId">
+        <span class="col-code">
+          <input class="currency-input-inline" [(ngModel)]="editingCode"
+                 placeholder="Code" style="text-transform: uppercase; width: 80px">
+        </span>
+        <span class="col-name">
+          <input class="currency-input-inline" [(ngModel)]="editingName" placeholder="Name">
+        </span>
+        <span class="col-default"></span>
+        <span class="col-actions">
+          <button class="btn-icon btn-save-icon" (click)="saveEdit(c)" title="Save">
+            <mat-icon>check</mat-icon>
+          </button>
+          <button class="btn-icon" (click)="cancelEdit()" title="Cancel">
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      </ng-container>
+
+    </div>
+  </div>
+</div>

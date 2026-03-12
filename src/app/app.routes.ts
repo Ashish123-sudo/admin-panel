@@ -69,25 +69,45 @@ export const routes: Routes = [
     path: 'settings/terms',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./settings/tc-list/terms-settings.component')
-        .then(m => m.TermsSettingsComponent)
+      import('./settings/tc-library/tc-library.component')
+        .then(m => m.TcLibraryComponent)
   },
-
   {
-    path: 'settings/terms/add',
+    path: 'settings/templates',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./settings/tc-add/tc-add.component')
-        .then(m => m.TcAddComponent)
+      import('./settings/tc-template/tc-template-list.component')
+        .then(m => m.TcTemplateListComponent)
   },
-
   {
-  path: 'settings/terms/edit/:id',
+    path: 'settings/templates/add',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./settings/tc-edit/tc-edit.component')
-        .then(m => m.TcEditComponent)
+      import('./settings/tc-template/tc-template-add.component')
+        .then(m => m.TcTemplateAddComponent)
   },
+  {
+    path: 'settings/templates/edit/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./settings/tc-template/tc-template-add.component')
+        .then(m => m.TcTemplateAddComponent)
+  },
+  {
+    path: 'settings/currencies',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./settings/currencies/currencies.component')
+        .then(m => m.CurrenciesComponent)
+  },
+  {
+    path: 'settings/roles',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./settings/roles/roles.component')
+        .then(m => m.RolesComponent)
+  },
+
   // ================= DEFAULT ROUTE =================
   {
     path: '',

@@ -1,0 +1,65 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">T&C Templates</h1>
+    <button class="btn-add" (click)="addNew()">
+      <mat-icon>add</mat-icon> New Template
+    </button>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">Loading...</div>
+
+  <div class="empty-state" *ngIf="!isLoading && templates.length === 0">
+    <mat-icon>folder_open</mat-icon>
+    <p>No templates yet. Create one to get started.</p>
+    <button class="btn-add" (click)="addNew()">
+      <mat-icon>add</mat-icon> New Template
+    </button>
+  </div>
+
+  <div class="templates-grid" *ngIf="!isLoading && templates.length > 0">
+    <div class="template-card" *ngFor="let t of templates"
+         [class.expanded]="expandedTemplateId === t.templateId">
+
+      <div class="card-header">
+        <div class="card-icon" (click)="toggleExpand(t.templateId!)" style="cursor:pointer">
+          <mat-icon>{{ expandedTemplateId === t.templateId ? 'folder_open' : 'folder' }}</mat-icon>
+        </div>
+        <div class="card-actions">
+          <ng-container *ngIf="expandedTemplateId !== t.templateId">
+            <button class="btn-icon" (click)="edit(t.templateId!)" title="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="btn-icon btn-delete" (click)="delete(t.templateId!)" title="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-container>
+          <button class="btn-icon" *ngIf="expandedTemplateId === t.templateId"
+                  (click)="expandedTemplateId = null" title="Close">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body" (click)="toggleExpand(t.templateId!)" style="cursor:pointer">
+        <h3 class="card-title">{{ t.templateName }}</h3>
+        <p class="card-types">{{ getTypesSummary(t) }}</p>
+        <span class="card-count">{{ getTermCount(t) }} term{{ getTermCount(t) !== 1 ? 's' : '' }}</span>
+      </div>
+
+          <!-- Expanded terms -->
+      <div class="card-terms" *ngIf="expandedTemplateId === t.templateId">
+        <div class="terms-group" *ngFor="let group of getGroupedTerms(t)">
+          <div class="terms-group-title">{{ group.typeName }}</div>
+          <div class="terms-group-item" *ngFor="let term of group.terms; let i = index">
+            <span class="term-num">{{ i + 1 }}.</span>
+            <span class="term-text">{{ term.termText }}</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

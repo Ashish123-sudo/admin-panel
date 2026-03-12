@@ -1,0 +1,128 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">{{ isEditMode ? 'Edit Template' : 'New Template' }}</h1>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">Loading...</div>
+
+  <div class="content" *ngIf="!isLoading">
+
+    <!-- Template Name -->
+    <div class="name-row">
+      <label class="field-label">Template Name <span class="required">*</span></label>
+      <input class="name-input" [(ngModel)]="templateName"
+             placeholder="e.g. Standard Export Terms" />
+    </div>
+
+    <!-- Two-panel layout -->
+    <div class="panels-layout">
+
+      <!-- ── LEFT: Selected Terms ── -->
+      <div class="panel panel-left">
+        <div class="panel-header">
+          <span class="panel-title">Selected Terms</span>
+          <span class="panel-count selected-count-badge" *ngIf="selectedTerms.length > 0">
+            {{ selectedTerms.length }}
+          </span>
+        </div>
+
+        <div class="panel-body">
+          <div cdkDropList
+               #selectedList="cdkDropList"
+               [cdkDropListData]="selectedTerms"
+               [cdkDropListConnectedTo]="[availableList]"
+               (cdkDropListDropped)="onDropSelected($event)"
+               class="drop-list drop-list-left">
+
+            <div class="panel-empty-drop" *ngIf="selectedTerms.length === 0">
+              <mat-icon>post_add</mat-icon>
+              <p>No terms selected</p>
+              <p class="hint">Drag terms from the library or use <strong>+</strong> to add</p>
+            </div>
+
+            <div class="selected-term-row"
+                 *ngFor="let term of selectedTerms; let i = index"
+                 cdkDrag [cdkDragData]="term">
+              <div class="drag-placeholder" *cdkDragPlaceholder></div>
+              <span class="drag-handle" cdkDragHandle>
+                <mat-icon>drag_indicator</mat-icon>
+              </span>
+              <span class="selected-term-text">{{ term.termText }}</span>
+              <span class="selected-term-badge" *ngIf="term.tcType">
+                {{ term.tcType.typeName }}
+              </span>
+              <button class="btn-remove" (click)="removeTerm(i)" title="Remove">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RIGHT: Available Terms ── -->
+      <div class="panel panel-right">
+        <div class="panel-header">
+          <span class="panel-title">Available Terms</span>
+          <span class="panel-count">{{ availableTerms.length }}</span>
+        </div>
+
+        <div class="panel-body">
+          <div class="panel-empty" *ngIf="availableTerms.length === 0">
+            <mat-icon>check_circle</mat-icon>
+            <p>All terms have been added</p>
+          </div>
+
+          <!--
+            IMPORTANT: cdkDropList must iterate a FLAT array.
+            Group labels are rendered OUTSIDE the drop list as overlays.
+            The drop list only contains cdkDrag items.
+          -->
+          <div cdkDropList
+               #availableList="cdkDropList"
+               [cdkDropListData]="availableTerms"
+               [cdkDropListConnectedTo]="[selectedList]"
+               (cdkDropListDropped)="onDropAvailable($event)"
+               class="drop-list drop-list-right">
+
+            <ng-container *ngFor="let item of availableFlatList">
+
+              <!-- Group header — not draggable -->
+              <div class="type-group-label" *ngIf="item.isHeader">
+                <span>{{ item.label }}</span>
+                <span class="group-count">{{ item.count }}</span>
+              </div>
+
+              <!-- Term row — draggable -->
+              <div class="available-term-row"
+                   *ngIf="!item.isHeader"
+                   cdkDrag [cdkDragData]="item.term">
+                <div class="drag-placeholder" *cdkDragPlaceholder></div>
+                <span class="drag-handle" cdkDragHandle>
+                  <mat-icon>drag_indicator</mat-icon>
+                </span>
+                <span class="available-term-text">{{ item.term!.termText }}</span>
+                <button class="btn-add" (click)="addTerm(item.term!)" title="Add to template">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+
+            </ng-container>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn-save" (click)="save()" [disabled]="isSaving">
+        {{ isSaving ? 'Saving...' : (isEditMode ? 'Update Template' : 'Save Template') }}
+      </button>
+      <button class="btn-cancel" (click)="cancel()">Cancel</button>
+    </div>
+
+  </div>
+</div>

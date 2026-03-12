@@ -21,13 +21,21 @@
       <!-- Customer Selection -->
       <div class="form-group">
         <label class="form-label">Customer <span class="required">*</span></label>
-        <div class="input-wrapper">
-          <select class="form-input form-select" formControlName="customerId" required>
-            <option value="">Select Customer</option>
-            <option *ngFor="let customer of customers" [value]="customer.customerId">
-              {{ customer.name }} (ID: {{ customer.customerId }})
-            </option>
-          </select>
+        <div class="input-wrapper customer-autocomplete">
+          <input class="form-input"
+                 [(ngModel)]="customerInputValue"
+                 [ngModelOptions]="{standalone: true}"
+                 (input)="onCustomerInput()"
+                 (blur)="onCustomerBlur()"
+                 placeholder="Search customer..."
+                 autocomplete="off">
+          <div class="customer-suggestions" *ngIf="showCustomerSuggestions && customerSuggestions.length > 0">
+            <div class="customer-suggestion-item"
+                 *ngFor="let c of customerSuggestions"
+                 (mousedown)="selectCustomer(c)">
+              {{ c.name }}
+            </div>
+          </div>
         </div>
         <div class="field-error" *ngIf="quoteForm.get('customerId')?.invalid && quoteForm.get('customerId')?.touched">
           Please select a customer
@@ -52,32 +60,59 @@
       <!-- Currency Selection -->
       <div class="form-group">
         <label class="form-label">Currency <span class="required">*</span></label>
-        <div class="input-wrapper">
-          <select class="form-input form-select" formControlName="currency" required>
-            <option *ngFor="let c of currencies" [value]="c">{{ c }}</option>
-          </select>
+        <div class="input-wrapper currency-autocomplete">
+          <input class="form-input currency-input-field"
+                 [(ngModel)]="currencyInputValue"
+                 [ngModelOptions]="{standalone: true}"
+                 (focus)="onCurrencyFocus()"
+                 (input)="onCurrencyInput()"
+                 (blur)="onCurrencyBlur()"
+                 placeholder="Search currency..."
+                 autocomplete="off">
+          <button class="currency-clear-btn"
+                  *ngIf="currencyInputValue"
+                  type="button"
+                  (mousedown)="clearCurrency()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <div class="currency-suggestions" *ngIf="showCurrencySuggestions && (currencySuggestions.length > 0 || canAddNewCurrency)">
+            <div class="currency-suggestion-item"
+                 *ngFor="let c of currencySuggestions"
+                 (mousedown)="selectCurrency(c)">
+              <span class="currency-code-pill">{{ c.currencyCode }}</span>
+              {{ c.currencyName }}
+              <span class="currency-pending-badge" *ngIf="c.isPending">unsaved</span>
+            </div>
+            <div class="currency-suggestion-item currency-add-item"
+                 *ngIf="canAddNewCurrency"
+                 (mousedown)="addCurrencyOnTheFly()">
+              <mat-icon>add_circle_outline</mat-icon>
+              Add <strong>{{ newCurrencyCode }}</strong>&nbsp;— {{ newCurrencyName }}
+              <span class="currency-add-hint" *ngIf="isAddingCurrency">saving...</span>
+            </div>
+          </div>
+          <!-- Format hint shown when input doesn't match pattern -->
+          <div class="currency-format-hint" *ngIf="showCurrencySuggestions && showCurrencyFormatHint">
+            <mat-icon>info_outline</mat-icon>
+            Use format: <strong>USD - US Dollar</strong>
+          </div>
         </div>
       </div>
 
       <!-- Terms & Conditions Selection -->
       <div class="form-group">
-        <label class="form-label">Terms & Conditions <span class="required">*</span></label>
+        <label class="form-label">Terms & Conditions</label>
         <div class="input-wrapper tc-input-wrapper">
-          <select class="form-input form-select" formControlName="termsTemplateId"
-                  (change)="onTermsTemplateChange($event)">
-            <option value="">Select Terms & Conditions</option>
-            <option *ngFor="let t of termsTemplates" [value]="t.templateId">
-              {{ t.templateName }}
-            </option>
-          </select>
-          <button type="button" class="btn-view-tc" *ngIf="selectedTerms.length > 0"
-                  (click)="openTcModal()">
+          <span class="tc-status" *ngIf="selectedTerms.length > 0">
+            {{ selectedTerms.length }} group(s) loaded
+          </span>
+          <span class="tc-status empty" *ngIf="selectedTerms.length === 0">
+            No terms loaded
+          </span>
+          <button type="button" class="btn-view-tc" (click)="openTcModal()">
             <mat-icon>edit</mat-icon>
             Edit
           </button>
-        </div>
-        <div class="field-error" *ngIf="quoteForm.get('termsTemplateId')?.invalid && quoteForm.get('termsTemplateId')?.touched">
-          Please select terms & conditions
         </div>
       </div>
 
@@ -113,7 +148,7 @@
           <th mat-header-cell *matHeaderCellDef>DISC %</th>
           <td mat-cell *matCellDef="let item; let i = index">
             <input matInput type="number" [formControl]="item.get('itemDiscount')"
-                  (input)="updateItemValue(i)" placeholder="0" min="0" max="100" />
+                   (input)="updateItemValue(i)" placeholder="0" min="0" max="100" />
           </td>
         </ng-container>
 
@@ -182,8 +217,28 @@
     </div>
 
     <div class="modal-body">
-      <div class="tc-group" *ngFor="let group of selectedTerms; let gi = index">
 
+      <div class="tc-template-selector">
+        <label class="form-label">Load from template</label>
+        <div class="template-autocomplete">
+          <input class="form-input"
+                 [(ngModel)]="templateInputValue"
+                 [ngModelOptions]="{standalone: true}"
+                 (input)="onTemplateInput()"
+                 (blur)="onTemplateBlur()"
+                 placeholder="Search template..."
+                 autocomplete="off">
+          <div class="template-suggestions" *ngIf="showTemplateSuggestions && templateSuggestions.length > 0">
+            <div class="template-suggestion-item"
+                 *ngFor="let t of templateSuggestions"
+                 (mousedown)="selectTemplate(t)">
+              {{ t.templateName }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tc-group" *ngFor="let group of selectedTerms; let gi = index">
         <div class="tc-group-header">
           <input class="tc-group-name-input" [(ngModel)]="group.groupName"
                  [ngModelOptions]="{standalone: true}" placeholder="Group name">
@@ -191,7 +246,6 @@
             <mat-icon>delete</mat-icon>
           </button>
         </div>
-
         <div class="tc-term-row" *ngFor="let detail of group.termsDetails; let di = index">
           <span class="tc-term-num">{{ di + 1 }}.</span>
           <textarea class="tc-term-input" [(ngModel)]="detail.termText"
@@ -200,16 +254,11 @@
             <mat-icon>close</mat-icon>
           </button>
         </div>
-
-        <button type="button" class="btn-add-term" (click)="addTerm(gi)">
-          + Add Term
-        </button>
-
+        <button type="button" class="btn-add-term" (click)="addTerm(gi)">+ Add Term</button>
       </div>
 
-      <button type="button" class="btn-add-group" (click)="addGroup()">
-        + Add Term Type
-      </button>
+      <button type="button" class="btn-add-group" (click)="addGroup()">+ Add Term Type</button>
+
     </div>
 
     <div class="modal-footer">

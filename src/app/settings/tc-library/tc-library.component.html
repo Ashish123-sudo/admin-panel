@@ -1,0 +1,163 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">Terms & Conditions</h1>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">Loading...</div>
+
+  <div class="main-layout" *ngIf="!isLoading">
+
+    <!-- ── LEFT: Type Filters ── -->
+    <div class="types-panel">
+      <div class="types-panel-title">Types</div>
+
+      <div class="type-item" [class.active]="filterTypeId === null" (click)="filterTypeId = null">
+        <span class="type-name">All</span>
+        <span class="type-count">{{ terms.length }}</span>
+      </div>
+
+      <div class="type-item" *ngFor="let type of types"
+           [class.active]="filterTypeId === type.typeId"
+           (click)="filterTypeId = type.typeId!">
+        <span class="type-name">{{ type.typeName }}</span>
+        <span class="type-count">{{ getTermCountByType(type.typeId!) }}</span>
+        <button class="btn-delete-type" (click)="$event.stopPropagation(); deleteType(type.typeId!)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT: Terms List ── -->
+    <div class="terms-panel">
+
+      <!-- Add Term Form -->
+      <div class="add-term-form">
+        <textarea class="term-textarea" [(ngModel)]="newTermText"
+                  placeholder="Enter term or condition..."
+                  rows="2"></textarea>
+
+        <div class="add-term-controls">
+
+          <!-- Type autocomplete -->
+          <div class="type-autocomplete">
+            <input class="type-input-auto"
+                   [(ngModel)]="typeInputValue"
+                   (input)="onTypeInput()"
+                   (blur)="onTypeBlur()"
+                   placeholder="Type (optional — e.g. Payment Terms)"
+                   autocomplete="off">
+            <div class="type-suggestions" *ngIf="showTypeSuggestions && typeSuggestions.length > 0">
+              <div class="type-suggestion-item"
+                   *ngFor="let s of typeSuggestions"
+                   (mousedown)="selectTypeSuggestion(s)">
+                {{ s.typeName }}
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-add-term" (click)="addTerm()"
+                  [disabled]="!newTermText.trim()">
+            <mat-icon>add</mat-icon> Add Term
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Terms Table -->
+      <div class="terms-table">
+
+        <div class="terms-table-header">
+          <span class="col-drag"></span>
+          <span class="col-text">TERM / CONDITION</span>
+          <span class="col-type">TYPE</span>
+          <span class="col-actions"></span>
+        </div>
+
+        <div class="terms-empty" *ngIf="filteredTerms.length === 0">
+          <mat-icon>description</mat-icon>
+          <p>No terms found. Add one above.</p>
+        </div>
+
+        <!-- CDK Drop List -->
+        <div cdkDropList
+             [cdkDropListData]="filteredTerms"
+             (cdkDropListDropped)="onDrop($event)"
+             [cdkDropListDisabled]="filterTypeId !== null">
+
+          <div class="term-row" *ngFor="let term of filteredTerms" cdkDrag>
+
+            <!-- Drag handle -->
+            <span class="col-drag" cdkDragHandle
+                  [class.drag-disabled]="filterTypeId !== null"
+                  [title]="filterTypeId !== null ? 'Switch to All to reorder' : 'Drag to reorder'">
+              <mat-icon>drag_indicator</mat-icon>
+            </span>
+
+            <!-- Drag preview placeholder -->
+            <div class="drag-placeholder" *cdkDragPlaceholder></div>
+
+            <!-- View mode -->
+            <ng-container *ngIf="editingTermId !== term.termId">
+              <span class="col-text">{{ term.termText }}</span>
+              <span class="col-type">
+                <span class="type-badge" *ngIf="term.tcType">{{ term.tcType.typeName }}</span>
+                <span class="type-badge type-badge--general" *ngIf="!term.tcType">General</span>
+              </span>
+              <span class="col-actions">
+                <button class="btn-icon" (click)="startEdit(term)" title="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button class="btn-icon btn-delete" (click)="deleteTerm(term.termId!)" title="Delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </span>
+            </ng-container>
+
+            <!-- Edit mode -->
+            <ng-container *ngIf="editingTermId === term.termId">
+              <span class="col-text">
+                <textarea class="term-textarea-inline" [(ngModel)]="editingTermText" rows="2"></textarea>
+              </span>
+              <span class="col-type">
+                <div class="type-autocomplete">
+                  <input class="type-input-auto"
+                        [(ngModel)]="editingTypeInput"
+                        (input)="onEditTypeInput()"
+                        (blur)="onEditTypeBlur()"
+                        placeholder="Type..."
+                        autocomplete="off">
+                  <div class="type-suggestions" *ngIf="showEditTypeSuggestions && editTypeSuggestions.length > 0">
+                    <div class="type-suggestion-item"
+                        *ngFor="let s of editTypeSuggestions"
+                        (mousedown)="selectEditTypeSuggestion(s)">
+                      {{ s.typeName }}
+                    </div>
+                  </div>
+                </div>
+              </span>
+              <span class="col-actions">
+                <button class="btn-icon btn-save-icon" (click)="saveEdit(term)" title="Save">
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button class="btn-icon" (click)="cancelEdit()" title="Cancel">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </span>
+            </ng-container>
+
+          </div>
+        </div>
+
+        <!-- Hint when filtered -->
+        <div class="reorder-hint" *ngIf="filterTypeId !== null">
+          <mat-icon>info_outline</mat-icon>
+          Switch to <strong>All</strong> to reorder terms by dragging
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

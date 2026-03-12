@@ -139,7 +139,11 @@ export class App {
       this.router.navigate(['/quotes']);
     }
   }
+  settingsMenuOpen = false;
 
+  toggleSettingsMenu(): void {
+    this.settingsMenuOpen = !this.settingsMenuOpen;
+  }
   // ── Scope dropdown ──────────────────────────────────────────────────────────
 
   toggleScopeDropdown(event: MouseEvent): void {

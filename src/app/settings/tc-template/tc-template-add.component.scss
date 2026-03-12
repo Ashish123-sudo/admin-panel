@@ -1,0 +1,340 @@
+* { box-sizing: border-box; }
+
+.page-container {
+  padding: 24px;
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.page-header {
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e8e8e8;
+  background: #f9fafb;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 400;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.loading {
+  color: #9ca3af;
+  font-size: 13px;
+  padding: 40px 0;
+}
+
+// ── Name Row ──────────────────────────────────────
+.name-row {
+  margin-bottom: 24px;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 16px 20px;
+}
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.required { color: #ef4444; }
+
+.name-input {
+  width: 100%;
+  max-width: 480px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  outline: none;
+  &:focus { border-color: #3b82f6; }
+}
+
+// ── Two-panel Layout ──────────────────────────────
+.panels-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: start;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Panel Base ────────────────────────────────────
+.panel {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  overflow: hidden;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e8e8e8;
+  background: #f8f9fa;
+  flex-shrink: 0;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.panel-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  background: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.panel-left .panel-count {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+.panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: #9ca3af;
+  text-align: center;
+
+  mat-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 10px;
+    color: #d1d5db;
+  }
+
+  p {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+  }
+
+  .hint {
+    font-size: 12px;
+    font-weight: 400;
+    color: #9ca3af;
+    strong { color: #6b7280; }
+  }
+}
+
+// ── Drop List ─────────────────────────────────────
+.drop-list {
+  min-height: 100%;
+  padding: 4px 0;
+}
+
+// ── Selected Terms (Left) ─────────────────────────
+.selected-term-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fff;
+  transition: background 0.1s;
+
+  &:hover { background: #f9fafb; }
+  &:last-child { border-bottom: none; }
+}
+
+.drag-handle {
+  color: #d1d5db;
+  cursor: grab;
+  flex-shrink: 0;
+  margin-top: 1px;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  &:hover { color: #9ca3af; }
+}
+
+.selected-term-text {
+  flex: 1;
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.5;
+  min-width: 0;
+}
+
+.selected-term-badge {
+  font-size: 10px;
+  font-weight: 500;
+  color: #1e40af;
+  background: #dbeafe;
+  padding: 2px 6px;
+  border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.btn-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d1d5db;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 3px;
+  flex-shrink: 0;
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  &:hover { color: #ef4444; background: #fef2f2; }
+}
+
+// ── Available Terms (Right) ───────────────────────
+.type-group-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  .group-count {
+    font-size: 10px;
+    font-weight: 500;
+    color: #9ca3af;
+    background: #f3f4f6;
+    padding: 1px 6px;
+    border-radius: 8px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+}
+
+.available-term-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid #f5f5f5;
+  background: #fff;
+  cursor: grab;
+  transition: background 0.1s;
+
+  &:hover { background: #f0f9ff; }
+  &:last-child { border-bottom: none; }
+}
+
+.available-term-text {
+  flex: 1;
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.5;
+  min-width: 0;
+}
+
+.btn-add {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d1d5db;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 3px;
+  flex-shrink: 0;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  &:hover { color: #3b82f6; background: #dbeafe; }
+}
+
+// ── Drag & Drop Visuals ───────────────────────────
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-preview {
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 400px;
+  opacity: 0.95;
+}
+
+.drag-placeholder {
+  background: #eff6ff;
+  border: 2px dashed #93c5fd;
+  border-radius: 4px;
+  min-height: 42px;
+  margin: 2px 0;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// ── Actions ───────────────────────────────────────
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-save {
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: #3b82f6;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  &:hover { background: #2563eb; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.btn-cancel {
+  padding: 9px 20px;
+  font-size: 13px;
+  color: #555;
+  background: #fff;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  &:hover { background: #f5f5f5; }
+}

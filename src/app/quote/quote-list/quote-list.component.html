@@ -45,8 +45,8 @@
 
         <ng-container matColumnDef="totalValue">
           <th mat-header-cell *matHeaderCellDef>TOTAL VALUE</th>
-          <td mat-cell *matCellDef="let q" class="value-cell">
-            {{ q.totalValue | currency:(q.currency || 'INR'):'symbol':'1.2-2' }}
+         <td mat-cell *matCellDef="let q" class="value-cell">
+            {{ q.totalValue | currency:(q.currency || 'INR'):'code':'1.2-2' }}
           </td>
         </ng-container>
 

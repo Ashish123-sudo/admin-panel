@@ -1,0 +1,72 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">Application Roles</h1>
+    <button class="btn-add-role" (click)="showAddForm = !showAddForm">
+      <mat-icon>add</mat-icon> Add Role
+    </button>
+  </div>
+
+  <div class="add-form-bar" *ngIf="showAddForm">
+    <input class="role-input" [(ngModel)]="newRoleName"
+           placeholder="Role name (e.g. Quote Approver)"
+           (keyup.enter)="addRole()">
+    <input class="role-input" [(ngModel)]="newRoleDesc"
+           placeholder="Description (optional)"
+           (keyup.enter)="addRole()">
+    <button class="btn-confirm" (click)="addRole()" [disabled]="!newRoleName.trim()">Add</button>
+    <button class="btn-cancel-sm" (click)="showAddForm = false; newRoleName = ''; newRoleDesc = ''">Cancel</button>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">Loading...</div>
+
+  <div class="roles-table" *ngIf="!isLoading">
+
+    <div class="roles-table-header">
+      <span class="col-name">ROLE NAME</span>
+      <span class="col-desc">DESCRIPTION</span>
+      <span class="col-actions"></span>
+    </div>
+
+    <div class="roles-empty" *ngIf="roles.length === 0">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <p>No roles defined. Add one above.</p>
+    </div>
+
+    <div class="role-row" *ngFor="let role of roles">
+
+      <ng-container *ngIf="editingRoleId !== role.roleId">
+        <span class="col-name">
+          <span class="role-badge">{{ role.roleName }}</span>
+        </span>
+        <span class="col-desc">{{ role.description || '—' }}</span>
+        <span class="col-actions">
+          <button class="btn-icon" (click)="startEdit(role)" title="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button class="btn-icon btn-delete" (click)="deleteRole(role)" title="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </span>
+      </ng-container>
+
+      <ng-container *ngIf="editingRoleId === role.roleId">
+        <span class="col-name">
+          <input class="role-input-inline" [(ngModel)]="editingRoleName" placeholder="Role name">
+        </span>
+        <span class="col-desc">
+          <input class="role-input-inline" [(ngModel)]="editingRoleDesc" placeholder="Description">
+        </span>
+        <span class="col-actions">
+          <button class="btn-icon btn-save-icon" (click)="saveEdit(role)" title="Save">
+            <mat-icon>check</mat-icon>
+          </button>
+          <button class="btn-icon" (click)="cancelEdit()" title="Cancel">
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      </ng-container>
+
+    </div>
+  </div>
+</div>
