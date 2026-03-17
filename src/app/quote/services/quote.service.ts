@@ -65,4 +65,16 @@ export class QuoteService {
   getTermsTemplates(): Observable<TermsTemplate[]> {
     return this.http.get<TermsTemplate[]>(this.termsUrl);
   }
+
+  submitForApproval(quoteId: number, submittedBy: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${quoteId}/submit`, { submittedBy });
+  }
+
+  approveQuote(quoteId: number, approvedBy: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${quoteId}/approve`, { approvedBy });
+  }
+
+  rejectQuote(quoteId: number, approvedBy: string, rejectionReason: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${quoteId}/reject`, { approvedBy, rejectionReason });
+  }
 }

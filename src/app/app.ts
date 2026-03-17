@@ -50,10 +50,14 @@ export class App {
   scopeDropdownOpen = false;
   filteredCustomers: Customer[] = [];
   filteredQuotes: QuoteHeader[] = [];
-
+  isApproveQuotesActive = false;
   // Settings mode
   settingsMode = false;
   isTermsActive = false;
+  isTemplatesActive = false;
+  isCurrenciesActive = false;
+  isRolesActive = false;
+  isUsersActive = false;
 
   // Recent activity
   showRecentDropdown = false;
@@ -207,6 +211,10 @@ export class App {
     this.router.navigate(['/customers']);
   }
 
+  get canAccessSettings(): boolean { return this.auth.canAccessSettings(); }
+  get canCreateQuotes(): boolean { return this.auth.canCreateQuotes(); }
+  get canApproveQuotes(): boolean { return this.auth.canApproveQuotes(); }
+
   goToQuote(quote: QuoteHeader): void {
     this.clearSearch();
     this.recentService.push({ type: 'quote', label: quote.quoteRef ?? 'Quote', subLabel: `Customer ID: ${quote.customerId}`, route: ['/quotes'], icon: 'description' });
@@ -258,10 +266,17 @@ export class App {
   private updateRouteState(url: string) {
     this.isLoginPage = url.startsWith('/login');
     this.isCustomersActive = url.startsWith('/customers');
-    this.isQuotesActive = url.startsWith('/quotes');
+    this.isApproveQuotesActive = url.startsWith('/quotes/approve');
+    this.isTemplatesActive = url.startsWith('/settings/templates');
+    this.isCurrenciesActive = url.startsWith('/settings/currencies');
+    this.isRolesActive = url.startsWith('/settings/roles');
+    this.isUsersActive = url.startsWith('/settings/users');
+    this.isQuotesActive = url === '/quotes' || url.startsWith('/quotes/edit') || url.startsWith('/quotes/add');
+    this.isApproveQuotesActive = url.startsWith('/quotes/approve');
+    
     this.isTermsActive = url.startsWith('/settings/terms');
     this.settingsMode = url.startsWith('/settings');
-    this.userMenuOpen = this.isCustomersActive || this.isQuotesActive;
+    this.userMenuOpen = this.isCustomersActive || this.isQuotesActive || this.isApproveQuotesActive || url.startsWith('/quotes');
 
     if (!this.isLoginPage && this.allCustomers.length === 0) {
       this.loadSearchData();

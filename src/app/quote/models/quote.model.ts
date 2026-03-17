@@ -34,4 +34,8 @@ export interface QuoteHeader {
   quoteDetails?: QuoteDetail[];
   incomingTerms?: QuoteTermsCondition[];
   quoteTermsConditions?: QuoteTermsCondition[];
+  approvalStatus?: string;
+  submittedBy?: string;
+  approvedBy?: string;
+  rejectionReason?: string;
 }

@@ -82,14 +82,20 @@
       </button>
       <h3 class="detail-ref">{{ selectedQuote.quoteRef }}</h3>
       <div class="detail-actions">
-        <button mat-icon-button (click)="onEdit(selectedQuote)" matTooltip="Edit">
+        <button mat-icon-button (click)="onEdit(selectedQuote)" matTooltip="Edit" *ngIf="canCreateQuotes">
           <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button 
+                (click)="submitForApproval(selectedQuote)"
+                matTooltip="Submit for Approval"
+                *ngIf="canCreateQuotes && ((selectedQuote)?.approvalStatus === 'DRAFT' || !(selectedQuote)?.approvalStatus)">
+          <mat-icon>send</mat-icon>
         </button>
         <!-- ✅ Changed to openPreview instead of downloadPdf -->
         <button mat-icon-button (click)="openPreview(selectedQuote)" matTooltip="Preview PDF">
           <mat-icon>sim_card_download</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="onDelete(selectedQuote)" matTooltip="Delete">
+        <button mat-icon-button color="warn" (click)="onDelete(selectedQuote)" matTooltip="Delete" *ngIf="canDeleteQuotes">
           <mat-icon>delete</mat-icon>
         </button>
         <button class="detail-close-btn" mat-icon-button (click)="closeDetail()" matTooltip="Close">
@@ -131,6 +137,16 @@
           <div class="summary-row">
             <span class="summary-label">Currency</span>
             <span class="summary-value">{{ selectedQuote.currency || 'INR' }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Status</span>
+            <span class="status-badge"
+                  [class.status-draft]="!selectedQuote.approvalStatus || selectedQuote.approvalStatus === 'DRAFT'"
+                  [class.status-pending]="selectedQuote.approvalStatus === 'PENDING'"
+                  [class.status-approved]="selectedQuote.approvalStatus === 'APPROVED'"
+                  [class.status-rejected]="selectedQuote.approvalStatus === 'REJECTED'">
+              {{ selectedQuote.approvalStatus || 'DRAFT' }}
+            </span>
           </div>
         </div>
 

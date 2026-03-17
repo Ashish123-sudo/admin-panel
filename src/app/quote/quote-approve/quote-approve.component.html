@@ -1,0 +1,155 @@
+<div class="list-page">
+
+  <!-- LIST PANEL -->
+  <div class="list-panel" [class.shrink]="selectedQuote">
+
+    <div class="list-header">
+      <h2 class="list-title">Pending Approvals</h2>
+      <span class="pending-count" *ngIf="quotes.length > 0">{{ quotes.length }} pending</span>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-state">
+      <mat-spinner diameter="24"></mat-spinner>
+      <span>Loading...</span>
+    </div>
+
+    <div *ngIf="!isLoading && quotes.length === 0" class="empty-state">
+      <mat-icon>check_circle</mat-icon>
+      <p>No quotes pending approval.</p>
+    </div>
+
+    <div class="table-wrap" *ngIf="!isLoading && quotes.length > 0">
+      <div class="approve-table">
+                <div class="approve-table-header">
+          <span class="col-ref">QUOTE REF</span>
+          <span class="col-customerid">CUSTOMER ID</span>
+          <span class="col-customer">CUSTOMER NAME</span>
+          <span class="col-date">DATE</span>
+          <span class="col-qty">QTY</span>
+          <span class="col-value">TOTAL VALUE</span>
+        </div>
+
+        <div class="approve-row"
+            *ngFor="let q of quotes"
+            [class.selected-row]="selectedQuote?.quoteId === q.quoteId"
+            (click)="selectQuote(q)">
+          <span class="col-ref quote-ref">{{ q.quoteRef }}</span>
+          <span class="col-customerid">{{ q.customerId }}</span>
+          <span class="col-customer">{{ q.customerName || q.customerId }}</span>
+          <span class="col-date">{{ q.quoteDate | date:'dd/MM/yyyy' }}</span>
+          <span class="col-qty">{{ q.totalQuantity }}</span>
+          <span class="col-value">{{ q.totalValue | currency:(q.currency || 'INR'):'code':'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="detail-panel" *ngIf="selectedQuote">
+
+    <div class="detail-header">
+      <button class="detail-back-btn" (click)="closeDetail()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h3 class="detail-ref">{{ selectedQuote.quoteRef }}</h3>
+      <div class="detail-actions">
+        <button class="btn-approve" (click)="approve(selectedQuote)" matTooltip="Approve">
+          <mat-icon>check</mat-icon> Approve
+        </button>
+        <button class="btn-reject" (click)="openRejectPanel()" matTooltip="Reject">
+          <mat-icon>close</mat-icon> Reject
+        </button>
+        <button class="detail-close-btn" mat-icon-button (click)="closeDetail()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="detail-body">
+
+      <div *ngIf="isLoadingDetail" class="loading-state">
+        <mat-spinner diameter="24"></mat-spinner>
+        <p>Loading...</p>
+      </div>
+
+      <ng-container *ngIf="!isLoadingDetail">
+
+        <!-- Reject Panel -->
+        <div class="reject-panel" *ngIf="showRejectPanel">
+          <label class="form-label">Reason for rejection</label>
+          <textarea class="reject-textarea" [(ngModel)]="rejectionReason"
+                    placeholder="Enter reason..." rows="3"></textarea>
+          <div class="reject-actions">
+            <button class="btn-confirm-reject" (click)="confirmReject()"
+                    [disabled]="!rejectionReason.trim()">Confirm Reject</button>
+            <button class="btn-cancel" (click)="cancelReject()">Cancel</button>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-row">
+            <span class="summary-label">Quote Reference</span>
+            <span class="summary-value">{{ selectedQuote.quoteRef }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Customer</span>
+            <span class="summary-value highlight">{{ selectedQuote.customerName }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Quote Date</span>
+            <span class="summary-value">{{ selectedQuote.quoteDate | date:'dd MMM yyyy' }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Currency</span>
+            <span class="summary-value">{{ selectedQuote.currency || 'INR' }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Submitted By</span>
+            <span class="summary-value">{{ selectedQuote.submittedBy || '—' }}</span>
+          </div>
+        </div>
+
+        <div class="detail-section"
+             *ngIf="selectedQuote.quoteDetails && selectedQuote.quoteDetails.length > 0">
+          <div class="section-title">LINE ITEMS</div>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Description</th>
+                <th class="num-col">Rate</th>
+                <th class="num-col">Qty</th>
+                <th class="num-col">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of selectedQuote.quoteDetails; let i = index">
+                <td class="sl-col">{{ i + 1 }}</td>
+                <td>{{ item.itemDesc }}</td>
+                <td class="num-col">{{ item.itemUnitRate | currency:(selectedQuote.currency || 'INR'):'symbol':'1.2-2' }}</td>
+                <td class="num-col">{{ item.itemQuantity }}</td>
+                <td class="num-col value-col">{{ item.itemValue | currency:(selectedQuote.currency || 'INR'):'symbol':'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="summary-card totals-card">
+          <div class="summary-row">
+            <span class="summary-label">Total Quantity</span>
+            <span class="summary-value">{{ selectedQuote.totalQuantity }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Total Value</span>
+            <span class="summary-value total-value">
+              {{ selectedQuote.totalValue | currency:(selectedQuote.currency || 'INR'):'symbol':'1.2-2' }}
+            </span>
+          </div>
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,100 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">Users</h1>
+    <button class="btn-add-user" (click)="showAddForm = !showAddForm">
+      <mat-icon>person_add</mat-icon> Add User
+    </button>
+  </div>
+
+  <!-- Add Form -->
+  <div class="add-form-bar" *ngIf="showAddForm">
+    <input class="user-input" [(ngModel)]="newFullName" placeholder="Full name" />
+    <input class="user-input" [(ngModel)]="newUsername" placeholder="User ID (login)" />
+    <div class="password-wrapper">
+      <input class="user-input" [(ngModel)]="newPassword"
+             [type]="showNewPassword ? 'text' : 'password'"
+             placeholder="Password" />
+      <button class="btn-eye" type="button" (click)="showNewPassword = !showNewPassword">
+        <mat-icon>{{ showNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+    </div>
+    <select class="user-input user-select" [(ngModel)]="newRoleId">
+      <option [ngValue]="null">— Select Role —</option>
+      <option *ngFor="let r of roles" [ngValue]="r.roleId">{{ r.roleName }}</option>
+    </select>
+    <button class="btn-confirm" (click)="addUser()"
+            [disabled]="!newFullName.trim() || !newUsername.trim() || !newPassword.trim()">
+      Add
+    </button>
+    <button class="btn-cancel-sm" (click)="showAddForm = false">Cancel</button>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">Loading...</div>
+
+  <div class="users-table" *ngIf="!isLoading">
+
+    <div class="users-table-header">
+      <span class="col-name">FULL NAME</span>
+      <span class="col-username">USER ID</span>
+      <span class="col-role">ROLE</span>
+      <span class="col-actions"></span>
+    </div>
+
+    <div class="users-empty" *ngIf="users.length === 0">
+      <mat-icon>people</mat-icon>
+      <p>No users yet. Add one above.</p>
+    </div>
+
+    <div class="user-row" *ngFor="let user of users">
+
+      <ng-container *ngIf="editingUserId !== user.userId">
+        <span class="col-name">{{ user.fullName }}</span>
+        <span class="col-username username-badge">{{ user.username }}</span>
+        <span class="col-role">
+          <span class="role-badge">{{ getRoleName(user) }}</span>
+        </span>
+        <span class="col-actions">
+          <button class="btn-icon" (click)="startEdit(user)" title="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button class="btn-icon btn-delete" (click)="deleteUser(user)" title="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </span>
+      </ng-container>
+
+      <ng-container *ngIf="editingUserId === user.userId">
+        <span class="col-name">
+          <input class="user-input-inline" [(ngModel)]="editFullName" placeholder="Full name">
+        </span>
+        <span class="col-username username-badge">{{ user.username }}</span>
+        <span class="col-role">
+          <select class="user-input-inline" [(ngModel)]="editRoleId">
+            <option [ngValue]="null">— Select Role —</option>
+            <option *ngFor="let r of roles" [ngValue]="r.roleId">{{ r.roleName }}</option>
+          </select>
+        </span>
+        <span class="col-actions">
+          <div class="edit-password-row">
+            <div class="password-wrapper-sm">
+              <input class="user-input-inline" [(ngModel)]="editPassword"
+                     [type]="showEditPassword ? 'text' : 'password'"
+                     placeholder="New password (optional)">
+              <button class="btn-eye-sm" type="button" (click)="showEditPassword = !showEditPassword">
+                <mat-icon>{{ showEditPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </div>
+            <button class="btn-icon btn-save-icon" (click)="saveEdit(user)" title="Save">
+              <mat-icon>check</mat-icon>
+            </button>
+            <button class="btn-icon" (click)="cancelEdit()" title="Cancel">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </span>
+      </ng-container>
+
+    </div>
+  </div>
+</div>

@@ -17,6 +17,7 @@ import { Customer } from '../../customer/models/customer.model';
 import { NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { PdfService } from '../../shared/pdf.service';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-quote-list',
@@ -68,7 +69,8 @@ export class QuoteListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private searchService: SearchService,
     private pdfService: PdfService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -188,6 +190,19 @@ export class QuoteListComponent implements OnInit {
     });
   }
 
+  get canCreateQuotes(): boolean { return this.authService.canCreateQuotes(); }
+  get canDeleteQuotes(): boolean { return this.authService.canCreateQuotes(); }
+  submitForApproval(quote: QuoteHeader): void {
+    const submittedBy = this.authService.getUserEmail();
+    this.quoteService.submitForApproval(quote.quoteId!, submittedBy).subscribe({
+      next: () => {
+        this.snackBar.open(`Quote ${quote.quoteRef} submitted for approval`, 'Close', { duration: 2000 });
+        this.loadQuotes();
+      },
+      error: () => this.snackBar.open('Failed to submit for approval', 'Close', { duration: 3000 })
+    });
+  }
+  
   closeDetail(): void {
     this.selectedQuote = null;
   }
