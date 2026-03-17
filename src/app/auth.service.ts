@@ -10,24 +10,6 @@ export class AuthService {
   constructor(private router: Router, private http: HttpClient) {}
 
   login(username: string, password: string): Observable<any> {
-    if (username === 'admin' && password === 'admin123') {
-      const mockResponse = {
-        userId: 0,
-        fullName: 'Administrator',
-        username: 'admin',
-        role: 'Administrator'
-      };
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userEmail', mockResponse.username);
-      localStorage.setItem('userName', mockResponse.fullName);
-      localStorage.setItem('userId', 'USR-0');
-      localStorage.setItem('userRole', mockResponse.role);
-      return new Observable(observer => {
-        observer.next(mockResponse);
-        observer.complete();
-      });
-    }
-
     return this.http.post<any>(`${environment.apiUrl}/api/auth/login`, { username, password }).pipe(
       tap(response => {
         localStorage.setItem('isLoggedIn', 'true');
