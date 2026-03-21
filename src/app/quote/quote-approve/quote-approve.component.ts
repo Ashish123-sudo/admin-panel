@@ -24,11 +24,10 @@ export class QuoteApproveComponent implements OnInit {
   isLoading = true;
   isLoadingDetail = false;
   selectedQuote: any = null;
-
   showRejectPanel = false;
   rejectionReason = '';
 
-  private customerMap = new Map<number, any>();
+  private customerMap = new Map<string, any>();   // string key
 
   constructor(
     private quoteService: QuoteService,
@@ -76,10 +75,7 @@ export class QuoteApproveComponent implements OnInit {
     this.quoteService.getQuoteById(quote.quoteId).subscribe({
       next: (full: any) => {
         const customer = this.customerMap.get(full.customerId);
-        this.selectedQuote = {
-          ...full,
-          customerName: customer?.name ?? `ID: ${full.customerId}`
-        };
+        this.selectedQuote = { ...full, customerName: customer?.name ?? `ID: ${full.customerId}` };
         this.isLoadingDetail = false;
         this.cdr.detectChanges();
       },
@@ -87,10 +83,7 @@ export class QuoteApproveComponent implements OnInit {
     });
   }
 
-  closeDetail(): void {
-    this.selectedQuote = null;
-    this.showRejectPanel = false;
-  }
+  closeDetail(): void { this.selectedQuote = null; this.showRejectPanel = false; }
 
   approve(quote: any): void {
     const approvedBy = this.authService.getUserEmail();
@@ -105,15 +98,8 @@ export class QuoteApproveComponent implements OnInit {
     });
   }
 
-  openRejectPanel(): void {
-    this.rejectionReason = '';
-    this.showRejectPanel = true;
-  }
-
-  cancelReject(): void {
-    this.showRejectPanel = false;
-    this.rejectionReason = '';
-  }
+  openRejectPanel(): void { this.rejectionReason = ''; this.showRejectPanel = true; }
+  cancelReject(): void { this.showRejectPanel = false; this.rejectionReason = ''; }
 
   confirmReject(): void {
     if (!this.rejectionReason.trim()) return;

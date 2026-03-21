@@ -257,7 +257,9 @@ export class QuoteAddComponent implements OnInit {
       currency:     ['INR', Validators.required],
       quoteDetails: this.fb.array([])
     });
-    this.addRow();
+      this.addRow();
+      // ✅ Add this
+      setTimeout(() => this.cdr.detectChanges());
   }
 
   get quoteDetails(): FormArray {
@@ -277,7 +279,7 @@ export class QuoteAddComponent implements OnInit {
       itemValue:    [0]
     });
     this.quoteDetails.push(row);
-    if (this.table) this.table.renderRows();
+    setTimeout(() => { if (this.table) this.table.renderRows(); });
   }
 
   removeLineItem(index: number): void {
@@ -404,21 +406,21 @@ export class QuoteAddComponent implements OnInit {
   }
 
   private submitQuote(): void {
-    const formValue = this.quoteForm.value;
+    const formValue = this.quoteForm.getRawValue();
     const formattedDate = new Date(formValue.quoteDate).toISOString().split('T')[0];
 
-    const quoteData: QuoteHeader = {
-      customerId:    formValue.customerId,
-      quoteDate:     formattedDate,
-      currency:      formValue.currency,
+    const quoteData: any = {
+      customer: { customerId: formValue.customerId },  // ✅ nested
+      quoteDate: formattedDate,
+      currency: formValue.currency,
       totalQuantity: this.getTotalQuantity(),
-      totalValue:    this.getTotalValue(),
-      quoteDetails:  formValue.quoteDetails.map((d: any) => ({
+      totalValue: this.getTotalValue(),
+      quoteDetails: formValue.quoteDetails.map((d: any) => ({
         itemDesc:     d.itemDesc,
         itemUnitRate: d.itemUnitRate,
         itemQuantity: d.itemQuantity,
-        itemDiscount: d.itemDiscount,
-        itemValue:    d.itemQuantity * d.itemUnitRate * (1 - d.itemDiscount / 100)
+        itemDiscount: d.itemDiscount ?? 0,
+        itemValue:    d.itemQuantity * d.itemUnitRate * (1 - (d.itemDiscount ?? 0) / 100)
       })),
       incomingTerms: this.selectedTerms.flatMap((g: any, gi: number) =>
         g.termsDetails.map((d: any, di: number) => ({
@@ -434,9 +436,10 @@ export class QuoteAddComponent implements OnInit {
       next: (savedQuote) => {
         this.snackBar.open(`Quote ${savedQuote.quoteRef} created successfully`, 'Close', { duration: 3000 });
         this.isSubmitting = false;
-        this.resetForm();
+        this.router.navigate(['/quotes']);
       },
-      error: () => {
+      error: (err) => {
+        console.error('Save error:', err);
         this.snackBar.open('Failed to save quote', 'Close', { duration: 4000 });
         this.isSubmitting = false;
       }

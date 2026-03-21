@@ -18,7 +18,7 @@ export class TcLibraryService {
     return this.http.post<TcType>(`${this.base}/types`, type);
   }
 
-  deleteType(id: number): Observable<void> {
+  deleteType(id: string): Observable<void> {  // Changed from number to string
     return this.http.delete<void>(`${this.base}/types/${id}`);
   }
 
@@ -30,15 +30,15 @@ export class TcLibraryService {
     return this.http.post<TcLibraryItem>(`${this.base}/terms`, term);
   }
 
-  updateTerm(id: number, term: TcLibraryItem): Observable<TcLibraryItem> {
+  updateTerm(id: string, term: TcLibraryItem): Observable<TcLibraryItem> {  // Changed from number to string
     return this.http.put<TcLibraryItem>(`${this.base}/terms/${id}`, term);
   }
 
-  deleteTerm(id: number): Observable<void> {
+  deleteTerm(id: string): Observable<void> {  // Changed from number to string
     return this.http.delete<void>(`${this.base}/terms/${id}`);
   }
 
-  reorderTerms(items: { termId: number; sortOrder: number }[]): Observable<void> {
+  reorderTerms(items: { termId: string; sortOrder: number }[]): Observable<void> {  // Changed termId from number to string
     return this.http.put<void>(`${this.base}/terms/reorder`, items);
   }
 }

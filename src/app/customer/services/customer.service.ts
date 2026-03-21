@@ -19,7 +19,7 @@ export class CustomerService {
     );
   }
 
-  getCustomerById(id: number): Observable<Customer> {
+  getCustomerById(id: string): Observable<Customer> {  // Changed from number to string
     return this.http.get<Customer>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
@@ -31,13 +31,13 @@ export class CustomerService {
     );
   }
 
-  updateCustomer(id: number, customer: Customer): Observable<Customer> {
+  updateCustomer(id: string, customer: Customer): Observable<Customer> {  // Changed from number to string
     return this.http.put<Customer>(`${this.apiUrl}/${id}`, customer).pipe(
       catchError(this.handleError)
     );
   }
 
-  deleteCustomer(id: number): Observable<any> {
+  deleteCustomer(id: string): Observable<any> {  // Changed from number to string
     return this.http.delete(`${this.apiUrl}/${id}`, { observe: 'response' }).pipe(
       catchError(this.handleError)
     );

@@ -1,10 +1,10 @@
 export interface TcType {
-  typeId?: number;
+  typeId?: string;  // Changed from number to string (UUID)
   typeName: string;
 }
 
 export interface TcLibraryItem {
-  termId?: number;
+  termId?: string;  // Changed from number to string (UUID)
   termText: string;
   tcType?: TcType;
   sortOrder?: number;  

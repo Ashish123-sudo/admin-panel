@@ -1,6 +1,7 @@
 export interface QuoteDetail {
-  slNo?: number;
+  slNo?: string;
   quoteRef?: string;
+  quoteId?: string;
   itemDesc: string;
   itemUnitRate: number;
   itemQuantity: number;
@@ -9,6 +10,7 @@ export interface QuoteDetail {
 }
 
 export interface QuoteTermsCondition {
+  id?: string;
   groupName: string;
   termText: string;
   groupOrder: number;
@@ -16,9 +18,10 @@ export interface QuoteTermsCondition {
 }
 
 export interface QuoteHeader {
-  quoteId?: number;
+  quoteId?: string;
   quoteRef?: string;
-  customerId?: number;
+  customer?: { customerId: string };  // ✅ nested object for POST
+  customerId?: string;                // ✅ kept for display in list
   customerName?: string;
   quoteDate: string;
   totalQuantity?: number;

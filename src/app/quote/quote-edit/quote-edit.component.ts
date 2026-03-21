@@ -27,11 +27,11 @@ export class QuoteEditComponent implements OnInit {
   showTcModal = false;
   termsTemplates: any[] = [];
   isLoading = true;
-  currentQuoteId: number | null = null;
+  currentQuoteId: string | null = null;
   currentCurrency: string = 'INR';
   currencies: any[] = [];
   quoteRef: string = '';
-  customerId: number | null = null;
+  customerId: string | null = null;
   quoteDate: string = '';
   templateInputValue = '';
   showTemplateSuggestions = false;
@@ -64,7 +64,7 @@ export class QuoteEditComponent implements OnInit {
       this.router.navigate(['/quotes']);
       return;
     }
-    this.loadQuote(Number(id));
+    this.loadQuote(id);
     this.loadTermsTemplates();
   }
 
@@ -75,7 +75,7 @@ export class QuoteEditComponent implements OnInit {
     });
   }
 
-  loadQuote(id: number): void {
+  loadQuote(id: string): void {
     this.isLoading = true;
     this.quoteService.getQuoteById(id).subscribe({
       next: (response: any) => {
@@ -276,7 +276,7 @@ export class QuoteEditComponent implements OnInit {
     });
   }
 
-  deleteDetail(slNo: number): void {
+  deleteDetail(slNo: string): void {
     if (!confirm('Delete this item?')) return;
     this.quoteService.deleteQuoteDetail(slNo).subscribe({
       next: () => {
@@ -330,7 +330,7 @@ export class QuoteEditComponent implements OnInit {
     this.quoteService.updateQuote(this.currentQuoteId!, {
       quoteId: this.currentQuoteId!,
       quoteRef: this.quoteRef,
-      customerId: this.customerId!,
+      customerId: this.customerId ?? undefined,
       quoteDate: this.quoteDate,
       currency: this.currentCurrency,
       totalQuantity: this.getTotalQuantity(),

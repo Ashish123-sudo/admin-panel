@@ -22,7 +22,7 @@ export class RolesComponent implements OnInit {
   newRoleName = '';
   newRoleDesc = '';
 
-  editingRoleId: number | null = null;
+  editingRoleId: string | null = null;    // string
   editingRoleName = '';
   editingRoleDesc = '';
 
@@ -48,21 +48,16 @@ export class RolesComponent implements OnInit {
     this.appRoleService.create({ roleName: name, description: this.newRoleDesc.trim() }).subscribe({
       next: (r) => {
         this.roles.push(r);
-        this.newRoleName = '';
-        this.newRoleDesc = '';
-        this.showAddForm = false;
+        this.newRoleName = ''; this.newRoleDesc = ''; this.showAddForm = false;
         this.snackBar.open('Role added', 'Close', { duration: 2000 });
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        const msg = err?.error?.error || 'Failed to add role';
-        this.snackBar.open(msg, 'Close', { duration: 3000 });
-      }
+      error: (err) => this.snackBar.open(err?.error?.error || 'Failed to add role', 'Close', { duration: 3000 })
     });
   }
 
   startEdit(role: AppRole): void {
-    this.editingRoleId = role.roleId!;
+    this.editingRoleId = role.roleId!;    // string
     this.editingRoleName = role.roleName;
     this.editingRoleDesc = role.description || '';
   }

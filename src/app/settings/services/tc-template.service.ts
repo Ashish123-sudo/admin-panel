@@ -14,19 +14,19 @@ export class TcTemplateService {
     return this.http.get<TcTemplate[]>(this.base);
   }
 
-  getById(id: number): Observable<TcTemplate> {
+  getById(id: string): Observable<TcTemplate> {  // Changed from number to string
     return this.http.get<TcTemplate>(`${this.base}/${id}`);
   }
 
-  create(payload: { templateName: string; termIds: number[] }): Observable<TcTemplate> {
+  create(payload: { templateName: string; termIds: string[] }): Observable<TcTemplate> {  // Changed termIds from number[] to string[]
     return this.http.post<TcTemplate>(this.base, payload);
   }
 
-  update(id: number, payload: { templateName: string; termIds: number[] }): Observable<TcTemplate> {
+  update(id: string, payload: { templateName: string; termIds: string[] }): Observable<TcTemplate> {  // Changed id and termIds
     return this.http.put<TcTemplate>(`${this.base}/${id}`, payload);
   }
 
-  delete(id: number): Observable<void> {
+  delete(id: string): Observable<void> {  // Changed from number to string
     return this.http.delete<void>(`${this.base}/${id}`);
   }
 }

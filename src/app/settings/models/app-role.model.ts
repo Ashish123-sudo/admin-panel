@@ -1,5 +1,5 @@
 export interface AppRole {
-  roleId?: number;
+  roleId?: string;  // Changed from number to string (UUID)
   roleName: string;
   description?: string;
 }

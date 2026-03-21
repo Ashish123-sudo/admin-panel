@@ -5,7 +5,7 @@ import { QuoteHeader } from '../models/quote.model';
 import { environment } from '../../../environments/environment';
 
 export interface TermsTemplate {
-  id: number;
+  id: string;  // Changed from number to string (UUID)
   name: string;
   content: string;
 }
@@ -23,7 +23,7 @@ export class QuoteService {
     return this.http.get<QuoteHeader[]>(this.apiUrl);
   }
 
-  getQuoteById(id: number): Observable<QuoteHeader> {
+  getQuoteById(id: string): Observable<QuoteHeader> {  // Changed from number to string
     return this.http.get<QuoteHeader>(`${this.apiUrl}/${id}`);
   }
 
@@ -31,10 +31,11 @@ export class QuoteService {
     return this.http.get<QuoteHeader>(`${this.apiUrl}/ref/${quoteRef}`);
   }
 
-  getQuotesByCustomerId(customerId: number): Observable<QuoteHeader[]> {
+  getQuotesByCustomerId(customerId: string): Observable<QuoteHeader[]> {  // Changed from number to string
     return this.http.get<QuoteHeader[]>(`${this.apiUrl}/customer/${customerId}`);
   }
-  updateQuoteTerms(quoteId: number, terms: any[]): Observable<void> {
+
+  updateQuoteTerms(quoteId: string, terms: any[]): Observable<void> {  // Changed from number to string
     return this.http.put<void>(`${this.apiUrl}/${quoteId}/terms`, terms);
   }
 
@@ -42,11 +43,11 @@ export class QuoteService {
     return this.http.post<QuoteHeader>(this.apiUrl, quote);
   }
 
-  updateQuote(id: number, quote: QuoteHeader): Observable<QuoteHeader> {
+  updateQuote(id: string, quote: QuoteHeader): Observable<QuoteHeader> {  // Changed from number to string
     return this.http.put<QuoteHeader>(`${this.apiUrl}/${id}`, quote);
   }
 
-  deleteQuote(id: number): Observable<void> {
+  deleteQuote(id: string): Observable<void> {  // Changed from number to string
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
@@ -58,7 +59,7 @@ export class QuoteService {
     return this.http.put<any>(`${this.apiUrl}/detail/${item.slNo}`, item);
   }
 
-  deleteQuoteDetail(slNo: number): Observable<void> {
+  deleteQuoteDetail(slNo: string): Observable<void> {  // Changed from number to string
     return this.http.delete<void>(`${this.apiUrl}/detail/${slNo}`);
   }
 
@@ -66,15 +67,15 @@ export class QuoteService {
     return this.http.get<TermsTemplate[]>(this.termsUrl);
   }
 
-  submitForApproval(quoteId: number, submittedBy: string): Observable<any> {
+  submitForApproval(quoteId: string, submittedBy: string): Observable<any> {  // Changed from number to string
     return this.http.put(`${this.apiUrl}/${quoteId}/submit`, { submittedBy });
   }
 
-  approveQuote(quoteId: number, approvedBy: string): Observable<any> {
+  approveQuote(quoteId: string, approvedBy: string): Observable<any> {  // Changed from number to string
     return this.http.put(`${this.apiUrl}/${quoteId}/approve`, { approvedBy });
   }
 
-  rejectQuote(quoteId: number, approvedBy: string, rejectionReason: string): Observable<any> {
+  rejectQuote(quoteId: string, approvedBy: string, rejectionReason: string): Observable<any> {  // Changed from number to string
     return this.http.put(`${this.apiUrl}/${quoteId}/reject`, { approvedBy, rejectionReason });
   }
 }

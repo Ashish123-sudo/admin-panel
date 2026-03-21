@@ -4,12 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { TcTemplateService } from '../services/tc-template.service';
 import { TcLibraryService } from '../services/tc-library.service';
 import { TcLibraryItem, TcType } from '../models/tc-library.model';
 
-// Flat list item — either a group header or a term row
 interface FlatItem {
   isHeader: boolean;
   label?: string;
@@ -29,17 +28,14 @@ export class TcTemplateAddComponent implements OnInit {
   templateName = '';
   types: TcType[] = [];
   allTerms: TcLibraryItem[] = [];
-
-  selectedTerms: TcLibraryItem[] = [];   // left panel — ordered
-  availableTerms: TcLibraryItem[] = [];  // right panel — flat source of truth
-
-  // Flat list for the right CDK drop list (headers + terms interleaved)
+  selectedTerms: TcLibraryItem[] = [];
+  availableTerms: TcLibraryItem[] = [];
   availableFlatList: FlatItem[] = [];
 
   isLoading = true;
   isSaving = false;
   isEditMode = false;
-  editTemplateId: number | null = null;
+  editTemplateId: string | null = null;  // ← string, not number
 
   constructor(
     private tcTemplateService: TcTemplateService,
@@ -54,7 +50,7 @@ export class TcTemplateAddComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;
-      this.editTemplateId = Number(id);
+      this.editTemplateId = id;  // ← no Number() conversion
     }
     this.loadLibrary();
   }
@@ -72,14 +68,17 @@ export class TcTemplateAddComponent implements OnInit {
             } else {
               this.availableTerms = [...this.allTerms];
               this.rebuildFlatList();
-              this.isLoading = false;
-              this.cdr.detectChanges();
+              setTimeout(() => { this.isLoading = false; this.cdr.detectChanges(); }); // ✅
             }
           },
-          error: () => { this.isLoading = false; }
+          error: () => {
+            setTimeout(() => { this.isLoading = false; this.cdr.detectChanges(); });
+          }
         });
       },
-      error: () => { this.isLoading = false; }
+      error: () => {
+        setTimeout(() => { this.isLoading = false; this.cdr.detectChanges(); });
+      }
     });
   }
 
@@ -93,17 +92,15 @@ export class TcTemplateAddComponent implements OnInit {
           .filter(Boolean);
         this.availableTerms = this.allTerms.filter(t => !selectedIds.has(t.termId!));
         this.rebuildFlatList();
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        setTimeout(() => { this.isLoading = false; this.cdr.detectChanges(); }); // ✅
       },
       error: () => {
         this.snackBar.open('Failed to load template', 'Close', { duration: 3000 });
-        this.isLoading = false;
+        setTimeout(() => { this.isLoading = false; this.cdr.detectChanges(); }); // ✅
       }
     });
   }
 
-  // Build flat list: header marker followed by its terms
   rebuildFlatList(): void {
     const map = new Map<string, TcLibraryItem[]>();
     for (const term of this.availableTerms) {
@@ -111,7 +108,6 @@ export class TcTemplateAddComponent implements OnInit {
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(term);
     }
-
     const flat: FlatItem[] = [];
     for (const [label, terms] of map.entries()) {
       flat.push({ isHeader: true, label, count: terms.length });
@@ -121,8 +117,6 @@ export class TcTemplateAddComponent implements OnInit {
     }
     this.availableFlatList = flat;
   }
-
-  // ── Add / Remove ──────────────────────────────────
 
   addTerm(term: TcLibraryItem): void {
     this.availableTerms = this.availableTerms.filter(t => t.termId !== term.termId);
@@ -139,14 +133,10 @@ export class TcTemplateAddComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // ── Drag & Drop ───────────────────────────────────
-
   onDropSelected(event: CdkDragDrop<TcLibraryItem[]>): void {
     if (event.previousContainer === event.container) {
-      // Reorder within left panel
       moveItemInArray(this.selectedTerms, event.previousIndex, event.currentIndex);
     } else {
-      // Dragged from right — event.item.data is the term (set via [cdkDragData])
       const term: TcLibraryItem = event.item.data;
       this.availableTerms = this.availableTerms.filter(t => t.termId !== term.termId);
       this.selectedTerms.splice(event.currentIndex, 0, term);
@@ -157,7 +147,6 @@ export class TcTemplateAddComponent implements OnInit {
 
   onDropAvailable(event: CdkDragDrop<TcLibraryItem[]>): void {
     if (event.previousContainer === event.container) return;
-    // Dragged from left back to right
     const term: TcLibraryItem = event.item.data;
     this.selectedTerms = this.selectedTerms.filter(t => t.termId !== term.termId);
     this.availableTerms = [...this.availableTerms, term]
@@ -165,8 +154,6 @@ export class TcTemplateAddComponent implements OnInit {
     this.rebuildFlatList();
     this.cdr.detectChanges();
   }
-
-  // ── Save ──────────────────────────────────────────
 
   save(): void {
     if (!this.templateName.trim()) {
@@ -181,7 +168,7 @@ export class TcTemplateAddComponent implements OnInit {
     this.isSaving = true;
     const payload = {
       templateName: this.templateName.trim(),
-      termIds: this.selectedTerms.map(t => t.termId!)
+      termIds: this.selectedTerms.map(t => String(t.termId!))  // ← string[]
     };
 
     const request = this.isEditMode
@@ -198,7 +185,7 @@ export class TcTemplateAddComponent implements OnInit {
       },
       error: () => {
         this.snackBar.open('Failed to save template', 'Close', { duration: 3000 });
-        this.isSaving = false;
+        setTimeout(() => { this.isSaving = false; this.cdr.detectChanges(); }); // ✅
       }
     });
   }

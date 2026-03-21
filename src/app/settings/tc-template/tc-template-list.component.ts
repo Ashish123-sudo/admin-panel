@@ -17,7 +17,7 @@ export class TcTemplateListComponent implements OnInit {
 
   templates: TcTemplate[] = [];
   isLoading = true;
-  expandedTemplateId: number | null = null;
+  expandedTemplateId: string | null = null;  // Changed from number to string
 
   constructor(
     private tcTemplateService: TcTemplateService,
@@ -43,7 +43,7 @@ export class TcTemplateListComponent implements OnInit {
     });
   }
 
-  toggleExpand(templateId: number): void {
+  toggleExpand(templateId: string): void {  // Changed from number to string
     this.expandedTemplateId = this.expandedTemplateId === templateId ? null : templateId;
   }
 
@@ -62,11 +62,11 @@ export class TcTemplateListComponent implements OnInit {
     this.router.navigate(['/settings/templates/add']);
   }
 
-  edit(templateId: number): void {
+  edit(templateId: string): void {  // Changed from number to string
     this.router.navigate(['/settings/templates/edit', templateId]);
   }
 
-  delete(templateId: number): void {
+  delete(templateId: string): void {  // Changed from number to string
     if (!confirm('Delete this template?')) return;
     this.tcTemplateService.delete(templateId).subscribe({
       next: () => {

@@ -1,8 +1,8 @@
 export interface AppUser {
-  userId?: number;
+  userId?: string;  // Changed from number to string (UUID)
   fullName: string;
   username: string;
   password?: string;
-  appRole?: { roleId: number; roleName: string };
-  roleId?: number;
+  appRole?: { roleId: string; roleName: string };  // Changed roleId from number to string
+  roleId?: string;  // Changed from number to string (UUID)
 }

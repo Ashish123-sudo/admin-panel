@@ -18,13 +18,11 @@ export class CurrenciesComponent implements OnInit {
   currencies: Currency[] = [];
   isLoading = true;
 
-  // Add
   showAddForm = false;
   newCode = '';
   newName = '';
 
-  // Edit
-  editingId: number | null = null;
+  editingId: string | null = null;    // string
   editingCode = '';
   editingName = '';
 
@@ -50,21 +48,16 @@ export class CurrenciesComponent implements OnInit {
     this.currencyService.create({ currencyCode: code, currencyName: this.newName.trim() }).subscribe({
       next: (c) => {
         this.currencies.push(c);
-        this.newCode = '';
-        this.newName = '';
-        this.showAddForm = false;
+        this.newCode = ''; this.newName = ''; this.showAddForm = false;
         this.snackBar.open('Currency added', 'Close', { duration: 2000 });
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        const msg = err?.error?.error || 'Failed to add currency';
-        this.snackBar.open(msg, 'Close', { duration: 3000 });
-      }
+      error: (err) => this.snackBar.open(err?.error?.error || 'Failed to add currency', 'Close', { duration: 3000 })
     });
   }
 
   startEdit(c: Currency): void {
-    this.editingId = c.currencyId!;
+    this.editingId = c.currencyId!;   // string
     this.editingCode = c.currencyCode;
     this.editingName = c.currencyName || '';
   }
@@ -108,10 +101,7 @@ export class CurrenciesComponent implements OnInit {
         this.snackBar.open('Currency deleted', 'Close', { duration: 2000 });
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        const msg = err?.error?.error || 'Failed to delete';
-        this.snackBar.open(msg, 'Close', { duration: 3000 });
-      }
+      error: (err) => this.snackBar.open(err?.error?.error || 'Failed to delete', 'Close', { duration: 3000 })
     });
   }
 }

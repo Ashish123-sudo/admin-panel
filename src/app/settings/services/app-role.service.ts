@@ -10,8 +10,19 @@ export class AppRoleService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<AppRole[]> { return this.http.get<AppRole[]>(this.base); }
-  create(role: AppRole): Observable<AppRole> { return this.http.post<AppRole>(this.base, role); }
-  update(id: number, role: AppRole): Observable<AppRole> { return this.http.put<AppRole>(`${this.base}/${id}`, role); }
-  delete(id: number): Observable<void> { return this.http.delete<void>(`${this.base}/${id}`); }
+  getAll(): Observable<AppRole[]> { 
+    return this.http.get<AppRole[]>(this.base); 
+  }
+  
+  create(role: AppRole): Observable<AppRole> { 
+    return this.http.post<AppRole>(this.base, role); 
+  }
+  
+  update(id: string, role: AppRole): Observable<AppRole> {  // Changed from number to string
+    return this.http.put<AppRole>(`${this.base}/${id}`, role); 
+  }
+  
+  delete(id: string): Observable<void> {  // Changed from number to string
+    return this.http.delete<void>(`${this.base}/${id}`); 
+  }
 }

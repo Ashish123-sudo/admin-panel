@@ -22,22 +22,18 @@ export class TcLibraryComponent implements OnInit {
   showEditTypeSuggestions = false;
   editTypeSuggestions: TcType[] = [];
 
-  // Add term
   newTermText = '';
-  selectedTypeId: number | null = null;
+  selectedTypeId: string | null = null;       // string
 
-  // Type autocomplete
   typeInputValue = '';
   showTypeSuggestions = false;
   typeSuggestions: TcType[] = [];
 
-  // Edit term
-  editingTermId: number | null = null;
+  editingTermId: string | null = null;        // string
   editingTermText = '';
-  editingTypeId: number | null = null;
+  editingTypeId: string | null = null;        // string
 
-  // Filter
-  filterTypeId: number | null = null;
+  filterTypeId: string | null = null;         // string
 
   isLoading = true;
 
@@ -47,20 +43,12 @@ export class TcLibraryComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
-    this.loadAll();
-  }
+  ngOnInit(): void { this.loadAll(); }
 
   onEditTypeInput(): void {
     const val = this.editingTypeInput.trim().toLowerCase();
-    if (!val) {
-      this.editTypeSuggestions = [];
-      this.showEditTypeSuggestions = false;
-      return;
-    }
-    this.editTypeSuggestions = this.types.filter(t =>
-      t.typeName.toLowerCase().includes(val)
-    );
+    if (!val) { this.editTypeSuggestions = []; this.showEditTypeSuggestions = false; return; }
+    this.editTypeSuggestions = this.types.filter(t => t.typeName.toLowerCase().includes(val));
     this.showEditTypeSuggestions = true;
   }
 
@@ -70,7 +58,7 @@ export class TcLibraryComponent implements OnInit {
 
   selectEditTypeSuggestion(type: TcType): void {
     this.editingTypeInput = type.typeName;
-    this.editingTypeId = type.typeId!;
+    this.editingTypeId = type.typeId!;        // string
     this.showEditTypeSuggestions = false;
   }
 
@@ -81,7 +69,6 @@ export class TcLibraryComponent implements OnInit {
         this.types = types;
         this.tcLibraryService.getTerms().subscribe({
           next: (terms) => {
-            // Sort by sortOrder on load
             this.terms = terms.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
             this.isLoading = false;
             this.cdr.detectChanges();
@@ -97,32 +84,21 @@ export class TcLibraryComponent implements OnInit {
 
   onDrop(event: CdkDragDrop<TcLibraryItem[]>): void {
     if (event.previousIndex === event.currentIndex) return;
-
-    // Reorder the local array
     moveItemInArray(this.terms, event.previousIndex, event.currentIndex);
-
-    // Assign new sortOrder values (1-based)
-    this.terms.forEach((term, index) => {
-      term.sortOrder = index + 1;
-    });
-
+    this.terms.forEach((term, index) => { term.sortOrder = index + 1; });
     this.cdr.detectChanges();
 
-    // Save new order to backend
     const orderPayload = this.terms
       .filter(term => term.termId != null)
       .map((term, index) => ({
-        termId: term.termId as number,
+        termId: term.termId as string,        // string
         sortOrder: index + 1
       }));
 
     this.tcLibraryService.reorderTerms(orderPayload).subscribe({
-      next: () => {
-        this.snackBar.open('Order saved', 'Close', { duration: 1500 });
-      },
+      next: () => this.snackBar.open('Order saved', 'Close', { duration: 1500 }),
       error: () => {
         this.snackBar.open('Failed to save order', 'Close', { duration: 3000 });
-        // Reload to restore correct order
         this.loadAll();
       }
     });
@@ -130,7 +106,7 @@ export class TcLibraryComponent implements OnInit {
 
   // ── TYPES ──────────────────────────────────────────
 
-  deleteType(typeId: number): void {
+  deleteType(typeId: string): void {         // string
     if (!confirm('Delete this type? Terms under it will lose their type tag.')) return;
     this.tcLibraryService.deleteType(typeId).subscribe({
       next: () => {
@@ -147,14 +123,8 @@ export class TcLibraryComponent implements OnInit {
 
   onTypeInput(): void {
     const val = this.typeInputValue.trim().toLowerCase();
-    if (!val) {
-      this.typeSuggestions = [];
-      this.showTypeSuggestions = false;
-      return;
-    }
-    this.typeSuggestions = this.types.filter(t =>
-      t.typeName.toLowerCase().includes(val)
-    );
+    if (!val) { this.typeSuggestions = []; this.showTypeSuggestions = false; return; }
+    this.typeSuggestions = this.types.filter(t => t.typeName.toLowerCase().includes(val));
     this.showTypeSuggestions = true;
   }
 
@@ -164,7 +134,7 @@ export class TcLibraryComponent implements OnInit {
 
   selectTypeSuggestion(type: TcType): void {
     this.typeInputValue = type.typeName;
-    this.selectedTypeId = type.typeId!;
+    this.selectedTypeId = type.typeId!;      // string
     this.showTypeSuggestions = false;
   }
 
@@ -178,18 +148,11 @@ export class TcLibraryComponent implements OnInit {
   addTerm(): void {
     const text = this.newTermText.trim();
     if (!text) return;
-
     const typeName = this.typeInputValue.trim();
-    const existingType = this.types.find(
-      t => t.typeName.toLowerCase() === typeName.toLowerCase()
-    );
-
+    const existingType = this.types.find(t => t.typeName.toLowerCase() === typeName.toLowerCase());
     if (typeName && !existingType) {
       this.tcLibraryService.createType({ typeName }).subscribe({
-        next: (newType) => {
-          this.types.push(newType);
-          this.saveTerm(text, newType);
-        },
+        next: (newType) => { this.types.push(newType); this.saveTerm(text, newType); },
         error: () => this.snackBar.open('Failed to create type', 'Close', { duration: 3000 })
       });
     } else {
@@ -198,12 +161,8 @@ export class TcLibraryComponent implements OnInit {
   }
 
   saveTerm(text: string, type: TcType | null): void {
-    const payload: any = {
-      termText: text,
-      sortOrder: this.terms.length + 1   // new terms go to the end
-    };
+    const payload: any = { termText: text, sortOrder: this.terms.length + 1 };
     if (type) payload.tcType = { typeId: type.typeId, typeName: type.typeName };
-
     this.tcLibraryService.createTerm(payload).subscribe({
       next: (saved) => {
         this.terms.push(saved);
@@ -218,7 +177,7 @@ export class TcLibraryComponent implements OnInit {
   }
 
   startEdit(term: TcLibraryItem): void {
-    this.editingTermId = term.termId!;
+    this.editingTermId = term.termId!;       // string
     this.editingTermText = term.termText;
     this.editingTypeId = term.tcType?.typeId ?? null;
     this.editingTypeInput = term.tcType?.typeName || '';
@@ -226,18 +185,11 @@ export class TcLibraryComponent implements OnInit {
 
   saveEdit(term: TcLibraryItem): void {
     if (!this.editingTermText.trim()) return;
-
     const typeName = this.editingTypeInput.trim();
-    const existingType = this.types.find(
-      t => t.typeName.toLowerCase() === typeName.toLowerCase()
-    );
-
+    const existingType = this.types.find(t => t.typeName.toLowerCase() === typeName.toLowerCase());
     if (typeName && !existingType) {
       this.tcLibraryService.createType({ typeName }).subscribe({
-        next: (newType) => {
-          this.types.push(newType);
-          this.doSaveEdit(term, newType);
-        },
+        next: (newType) => { this.types.push(newType); this.doSaveEdit(term, newType); },
         error: () => this.snackBar.open('Failed to create type', 'Close', { duration: 3000 })
       });
     } else {
@@ -251,7 +203,6 @@ export class TcLibraryComponent implements OnInit {
       sortOrder: term.sortOrder,
       tcType: type ? { typeId: type.typeId, typeName: type.typeName } : null
     };
-
     this.tcLibraryService.updateTerm(term.termId!, updated).subscribe({
       next: (saved) => {
         const idx = this.terms.findIndex(t => t.termId === term.termId);
@@ -266,16 +217,13 @@ export class TcLibraryComponent implements OnInit {
     });
   }
 
-  cancelEdit(): void {
-    this.editingTermId = null;
-  }
+  cancelEdit(): void { this.editingTermId = null; }
 
-  deleteTerm(termId: number): void {
+  deleteTerm(termId: string): void {        // string
     if (!confirm('Delete this term?')) return;
     this.tcLibraryService.deleteTerm(termId).subscribe({
       next: () => {
         this.terms = this.terms.filter(t => t.termId !== termId);
-        // Re-number sortOrder after delete
         this.terms.forEach((t, i) => t.sortOrder = i + 1);
         this.snackBar.open('Term deleted', 'Close', { duration: 2000 });
         this.cdr.detectChanges();
@@ -284,7 +232,7 @@ export class TcLibraryComponent implements OnInit {
     });
   }
 
-  getTermCountByType(typeId: number): number {
+  getTermCountByType(typeId: string): number {   // string
     return this.terms.filter(t => t.tcType?.typeId === typeId).length;
   }
 }

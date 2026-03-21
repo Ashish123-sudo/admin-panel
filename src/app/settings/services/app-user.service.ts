@@ -9,8 +9,19 @@ export class AppUserService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<any[]> { return this.http.get<any[]>(this.base); }
-  create(payload: any): Observable<any> { return this.http.post<any>(this.base, payload); }
-  update(id: number, payload: any): Observable<any> { return this.http.put<any>(`${this.base}/${id}`, payload); }
-  delete(id: number): Observable<void> { return this.http.delete<void>(`${this.base}/${id}`); }
+  getAll(): Observable<any[]> { 
+    return this.http.get<any[]>(this.base); 
+  }
+  
+  create(payload: any): Observable<any> { 
+    return this.http.post<any>(this.base, payload); 
+  }
+  
+  update(id: string, payload: any): Observable<any> {  // Changed from number to string
+    return this.http.put<any>(`${this.base}/${id}`, payload); 
+  }
+  
+  delete(id: string): Observable<void> {  // Changed from number to string
+    return this.http.delete<void>(`${this.base}/${id}`); 
+  }
 }
